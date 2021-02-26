@@ -1,0 +1,127 @@
+import { LoadingBarService } from './../../services/loading-bar.service';
+import { Component, HostListener, Input } from '@angular/core';
+import { Router, NavigationStart, NavigationEnd } from '@angular/router';
+import { filter, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+
+import moment from 'moment';
+
+@Component({
+  selector: 'shrd-base-wrapper',
+  templateUrl: './base-wrapper.component.html',
+  styleUrls: ['./base-wrapper.component.scss'],
+})
+export class BaseWrapperComponent {
+  private _sessionInterval: any;
+
+  @Input() title: string;
+  @Input() basePath: string;
+
+  tokenDuration: moment.Duration;
+
+  subs$: Subscription[] = [];
+
+  constructor(
+    private router: Router,
+    public loading: LoadingBarService
+  ) {
+    this.subs$.push(
+      this.router.events
+        .pipe(
+          tap(event => console.log('pré filter: ', event)),
+          filter(
+            (e) => e instanceof NavigationStart || e instanceof NavigationEnd
+          ),
+          tap(event => console.log('pos filter: ', event)),
+        )
+        .subscribe((e) => {
+          if (e instanceof NavigationStart){
+            this.loading.start();
+          }else{
+            this.loading.end();
+          }
+        })
+    );
+
+    this.refreshTokenTime();
+  }
+
+  ngOnDestroy(): void {
+    this.subs$.forEach((sub$) => sub$.unsubscribe());
+    clearInterval(this._sessionInterval);
+  }
+
+  handleLogout(): void {
+    clearInterval(this._sessionInterval);
+
+    //this.keycloak.logout();
+  }
+
+  handleUserName(): string {
+    // return (
+    //   this.userService.user?.pessoa?.nome
+    //     .split(' ')
+    //     .map((name) => `${name[0].toUpperCase()}${name.slice(1).toLowerCase()}`)
+    //     .join(' ') || 'Usuário não identificado'
+    // );
+    return (
+        'Instalar keycloak'
+        .split(' ')
+        .map((name) => `${name[0].toUpperCase()}${name.slice(1).toLowerCase()}`)
+        .join(' ') || 'Usuário não identificado'
+    );
+  }
+
+  /**
+   * This func is an auth token handler.
+   * It's not a session handler, the session has a limit time defined by keycloak
+   * (Actually about ~3hrs)
+   *
+   * It will reset the token in 1st run or if the user interact with the screen
+   * with 5 minutes left to expire
+   */
+
+  refreshTokenTime(): void {
+  }
+    
+
+   
+  // @HostListener('document:click')
+  // refreshTokenTime(): void {
+  //   if (
+  //     !this.tokenDuration ||
+  //     Math.round(this.tokenDuration.asMinutes()) <= 5
+  //   ) {
+  //     this.keycloak.updateToken(-1).then((refreshed) => {
+  //       if (refreshed) {
+  //         const kc = this.keycloak.getKeycloakInstance();
+
+  //         moment.locale('pt-br');
+  //         const currentTime = moment().unix();
+
+  //         const diffTime = kc.tokenParsed.exp + kc.timeSkew - currentTime;
+  //         const interval = 1000;
+
+  //         this.tokenDuration = moment.duration(diffTime, 's');
+
+  //         if (diffTime > 0) {
+  //           if (this._sessionInterval) {
+  //             clearInterval(this._sessionInterval);
+  //           }
+
+  //           this._sessionInterval = setInterval(() => {
+  //             if (this.keycloak.isTokenExpired()) {
+  //               this.handleLogout();
+  //             }
+
+  //             this.tokenDuration = moment.duration(
+  //               this.tokenDuration.asMilliseconds() - interval,
+  //               'ms'
+  //             );
+  //           }, interval);
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
+}

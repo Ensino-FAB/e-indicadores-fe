@@ -1,3 +1,4 @@
+import { environment } from './../environments/environment';
 import { Component } from '@angular/core';
 
 @Component({
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'e-indicadores-fe';
+  indicadoresEndpoint: string = environment.INDICADORES_FRONT_URL;
+  title = 'Gestão de indicadores';
 }

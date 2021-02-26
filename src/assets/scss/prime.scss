@@ -1,6 +1,6 @@
 // PrimeNg
-@import '../../node_modules/primeicons/primeicons.css';
-@import '../../node_modules/primeng/resources/primeng.min.css';
+@import '../../../node_modules/primeicons/primeicons.css';
+@import '../../../node_modules/primeng/resources/primeng.min.css';
 
 // PrimeFlex
 $gutter: 0.714286rem !default;
@@ -8,7 +8,7 @@ $fieldMargin: 1.42857rem !default;
 $fieldLabelMargin: 0.5rem !default;
 $helperTextMargin: 0.5rem !default;
 $spacer: 1.42857rem !default;
-@import '../../node_modules/primeflex/primeflex.scss';
+@import '../../../node_modules/primeflex/primeflex.scss';
 
 @import '~@angular/cdk/overlay-prebuilt.css';
 
