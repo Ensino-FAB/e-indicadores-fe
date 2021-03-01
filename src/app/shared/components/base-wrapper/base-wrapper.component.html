@@ -1,4 +1,4 @@
-<section>
+<section id="section">
   <header class="l-header">
     <p-toast></p-toast>
     <div class="c-header p-d-flex p-pl-3 p-pr-3 p-ai-center p-jc-between">
@@ -32,10 +32,13 @@
     </div>
     <div class="c-sub-header p-d-flex p-pl-3 p-pr-3 p-ai-center p-jc-between">
       <div>
-        <a href="#" target="_blank" rel="noopener">
+        <a href="#">
           <button pButton pRipple type="button" icon="pi pi-th-large" class="c-sub-btn"></button>
         </a>
-        <a href="#" target="_blank" rel="noopener">
+        <a href="#">
+          <button pButton pRipple type="button" label="Cadastro" class="c-sub-btn"></button>
+        </a>
+        <a href="#">
           <button pButton pRipple type="button" label="Indicadores" class="c-sub-btn"></button>
         </a>
       </div>
@@ -44,4 +47,7 @@
       </a>
     </div>
   </header>
+  <div class="l-body p-input-filled">
+    <ng-content></ng-content>
+  </div>
 </section>

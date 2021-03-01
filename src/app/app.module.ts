@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BaseWrapperModule } from './shared/components/base-wrapper/base-wrapper.module';
 
+
 @NgModule({
   declarations: [
     AppComponent

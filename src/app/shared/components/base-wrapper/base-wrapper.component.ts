@@ -28,11 +28,11 @@ export class BaseWrapperComponent {
     this.subs$.push(
       this.router.events
         .pipe(
-          tap(event => console.log('pré filter: ', event)),
+          //tap(event => console.log('pré filter: ', event)),
           filter(
             (e) => e instanceof NavigationStart || e instanceof NavigationEnd
           ),
-          tap(event => console.log('pos filter: ', event)),
+          //tap(event => console.log('pos filter: ', event)),
         )
         .subscribe((e) => {
           if (e instanceof NavigationStart){
