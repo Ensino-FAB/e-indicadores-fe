@@ -1,7 +1,7 @@
-<p-toast></p-toast>
+
 
 <div class="p-shadow-1" style="margin: 4rem;">
-
+    
     <button pButton label="Novo" icon="pi pi-plus" class="p-button-success p-mb-3"
         (click)="openDialogCreateIndicador()"></button>
 
@@ -51,7 +51,7 @@
         </ng-template>
     </p-table>
 
-    <p-dialog header="{{indicador?.idIndicador?'Editar ':'Criar '}} indicador" [(visible)]="showDialogCreate"
+    <p-dialog header="{{indicador?.idIndicador ? 'Editar ':'Criar '}} indicador" [(visible)]="showDialogCreate"
         [style]="{width: '40vw'}" [modal]="true" [closable]="false" class="p-fluid">
         <ng-template pTemplate="content">
             <div class="p-field p-formgrid p-grid" *ngIf="!indicador?.idIndicador">

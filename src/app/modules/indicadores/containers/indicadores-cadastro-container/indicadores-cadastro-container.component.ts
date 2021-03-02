@@ -3,7 +3,8 @@ import { Organizacao } from './../../../../models/organizacao.model';
 import { PessoaLogada } from './../../../../models/pessoa.model';
 import { Indicador } from './../../../../models/indicador.model';
 import { Component, OnInit } from '@angular/core';
-import { MessageService, ConfirmationService, PrimeNGConfig, SelectItem } from 'primeng/api';
+import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
+import { IndicadoresFacade } from '../indicadores-facade';
 
 @Component({
   selector: 'app-indicadores-cadastro-container',
@@ -34,12 +35,16 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
 
   constructor(
     private messageService: MessageService,
-    private primengConfig: PrimeNGConfig,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private facade: IndicadoresFacade
   ) { }
 
   ngOnInit(): void {
-    this.primengConfig.ripple = true;
+    this.buscarIndicadores();
+  }
+
+  buscarIndicadores(): void{
+    this.facade.findAllIndicadores('cdOrg').subscribe(response => this.indicadores = response);
   }
 
   openDialogCreateIndicador(): void {
@@ -58,15 +63,15 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   deleteIndicador(indicador: Indicador): void {
     this.confirmationService.confirm({
       message: 'Deseja apagar o indicador?',
-      // accept: () => {
-      //   this.indicadoresService.deleteIndicador(indicador.idIndicador)
-      //     .subscribe(
-      //       () => {
-      //         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso', life: 3000 });
-      //         this.buscarIndicadores();
-      //       },
-      //       e => this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao apagar indicador', life: 3000 }));
-      // }
+      accept: () => {
+        this.facade.deleteIndicador(indicador.idIndicador)
+          .subscribe(
+            () => {
+              this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso'});
+              this.buscarIndicadores();
+            },
+            e => this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao apagar indicador', life: 3000 }));
+      }
     });
   }
 

@@ -1,10 +1,10 @@
+import { IndicadoresFacade } from './containers/indicadores-facade';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IndicadoresCadastroContainerComponent } from './containers/indicadores-cadastro-container/indicadores-cadastro-container.component';
 import { IndicadoresConsultaContainerComponent } from './containers/indicadores-consulta-container/indicadores-consulta-container.component';
 import { INDICADORES_ROUTES } from './indicadores-routing.module';
-import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -20,7 +20,6 @@ import { FormsModule } from '@angular/forms';
   declarations: [IndicadoresCadastroContainerComponent, IndicadoresConsultaContainerComponent],
   imports: [
     CommonModule,
-    ToastModule,
     DialogModule,
     ConfirmDialogModule,
     InputTextareaModule,
@@ -31,6 +30,7 @@ import { FormsModule } from '@angular/forms';
     ToolbarModule,
     FormsModule,
     RouterModule.forChild(INDICADORES_ROUTES)
-  ]
+  ],
+  providers: [IndicadoresFacade]
 })
 export class IndicadoresModule { }
