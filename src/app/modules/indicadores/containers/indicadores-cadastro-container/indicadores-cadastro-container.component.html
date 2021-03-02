@@ -1,3 +1,113 @@
-<div style="height: 100%;" id="teste">
-    <p>indicadores-cadastro-container works!</p>
+<p-toast></p-toast>
+
+<div class="p-shadow-1" style="margin: 4rem;">
+
+    <button pButton label="Novo" icon="pi pi-plus" class="p-button-success p-mb-3"
+        (click)="openDialogCreateIndicador()"></button>
+
+
+    <p-table #dt [value]="indicadores" styleClass="" [(selection)]="indicadoresSelecionados" [rowHover]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="p-text-center" style="width: 10%">Código</th>
+                <th class="p-text-center" style="width: 25%">Nome</th>
+                <th class="p-text-center">Mínimo</th>
+                <th class="p-text-center">Ideal</th>
+                <th class="p-text-center">Existente</th>
+                <th class="p-text-center">Observações</th>
+                <th class="p-text-center">Última Atualização</th>
+                <th class="p-text-center">Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-indicador>
+            <tr>
+                <td class="p-text-center">{{indicador.sgCurso}}</td>
+                <td class="p-text-center">{{indicador.nmCurso}}</td>
+                <td class="p-text-center">{{indicador.minimo}}</td>
+                <td class="p-text-center">{{indicador.ideal}}</td>
+                <td class="p-text-center">{{indicador.existente}}</td>
+                <td class="p-text-center">
+                    <p-overlayPanel #op [dismissable]="true" [style]="{width: '150px'}" appendTo="body">
+                        <ng-template pTemplate>
+                            {{indicador.txObsevacoes}}
+                        </ng-template>
+                    </p-overlayPanel>
+                    <button pButton icon="pi pi-info-circle" class="p-button-raised p-button-text"
+                        *ngIf="indicador.txObsevacoes" (click)="op.toggle($event)"></button>
+                </td>
+                <td class="p-text-center">{{indicador.dtUltimaAtualizacao | date:'dd/MM/yyyy - HH:mm'}}</td>
+                <td class="p-text-center">
+                    <button pButton icon="pi pi-pencil" class="p-button-raised p-button-text p-button-success p-mr-2"
+                        (click)="edit(indicador)"></button>
+                    <button pButton icon="pi pi-trash" class="p-button-raised p-button-text p-button-danger"
+                        (click)="deleteIndicador(indicador)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                São {{indicadores ? indicadores.length : 0 }} indicadores no total.
+            </div>
+        </ng-template>
+    </p-table>
+
+    <p-dialog header="{{indicador?.idIndicador?'Editar ':'Criar '}} indicador" [(visible)]="showDialogCreate"
+        [style]="{width: '40vw'}" [modal]="true" [closable]="false" class="p-fluid">
+        <ng-template pTemplate="content">
+            <div class="p-field p-formgrid p-grid" *ngIf="!indicador?.idIndicador">
+                <div class="p-field p-col">
+                    <p-dropdown [options]="cursos" [(ngModel)]="cursoSelecionado"
+                        filterPlaceholder="Nenhum curso encontrado" placeholder="Selecione um curso" [filter]="true"
+                        filterBy="label,value.nmCapacitacao">
+                        <ng-template let-curso pTemplate="item">
+                            <div class="dropdown-item-container">
+                                <p style="font-weight: bolder; color: #175497;">{{curso.label}}</p>
+                                <p style="font-style: italic; font-size: small;">{{curso.value.nome}}</p>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <small class="p-invalid" *ngIf="!cursoSelecionado">Selecione um curso.</small>
+                </div>
+                <div class="p-field p-col">
+                    <p-dropdown [options]="orgsSubordinadas" [(ngModel)]="orgSelecionada" optionLabel="sigla"
+                        [filter]="true" filterBy="sigla" placeholder="Selecione uma organização">
+                    </p-dropdown>
+                    <small class="p-invalid" *ngIf="!orgSelecionada">Selecione uma organização.</small>
+                </div>
+            </div>
+            <div class="p-field  p-formgrid p-grid">
+                <div class="p-field p-col">
+                    <label for="vlwMin">Mínimo</label>
+                    <p-inputNumber id="vlwMin" [useGrouping]="false" [showButtons]="true" [min]="0"
+                        [(ngModel)]="indicador.minimo"></p-inputNumber>
+                </div>
+                <div class="p-field p-col">
+                    <label for="ideal">Ideal</label>
+                    <p-inputNumber id="ideal" [useGrouping]="false" [showButtons]="true" [min]="0"
+                        [(ngModel)]="indicador.ideal"></p-inputNumber>
+                </div>
+            </div>
+
+            <div class="p-field">
+                <label for="observacoes">Observações</label>
+                <textarea id="observacoes" pInputTextarea [(ngModel)]="indicador.txObsevacoes" rows="3"
+                    cols="20"></textarea>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-raised p-button-danger"
+                (click)="hideDialog()"></button>
+            <button pButton type="button" label="Salvar" icon="pi pi-times" class="p-button-raised"
+                (click)="saveIndicador()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-confirmDialog #cd header="Confirmação" icon="pi pi-exclamation-triangle">
+        <p-footer>
+            <button type="button" class="p-button-danger" pButton icon="pi pi-times" label="Não"
+                (click)="cd.reject()"></button>
+            <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+        </p-footer>
+    </p-confirmDialog>
 </div>

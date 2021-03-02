@@ -1,11 +1,7 @@
 export interface Pageable<T> {
   content: T[];
   pageable: {
-    sort: {
-      sorted: boolean;
-      unsorted: boolean;
-      empty: boolean;
-    };
+    sort: SortModel;
     offset: number;
     pageNumber: number;
     pageSize: number;
@@ -17,12 +13,14 @@ export interface Pageable<T> {
   last: boolean;
   size: number;
   number: number;
-  sort: {
-    sorted: boolean;
-    unsorted: boolean;
-    empty: boolean;
-  };
+  sort: SortModel;
   first: boolean;
   numberOfElements: number;
+  empty: boolean;
+}
+
+export interface SortModel {
+  unsorted: boolean;
+  sorted: boolean;
   empty: boolean;
 }

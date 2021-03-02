@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BaseWrapperModule } from './shared/components/base-wrapper/base-wrapper.module';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 
 @NgModule({
@@ -17,7 +18,7 @@ import { BaseWrapperModule } from './shared/components/base-wrapper/base-wrapper
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    BaseWrapperModule
+    BaseWrapperModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
