@@ -6,9 +6,13 @@ import { Routes } from '@angular/router';
 
 export const INDICADORES_ROUTES: Routes = [
     {
-        path: 'indicadores',
+        path: '',
         component: IndicadoresConsultaContainerComponent,
     },
+    {
+        path: 'cadastro',
+        component: IndicadoresCadastroContainerComponent
+    }
 ];
 
 @NgModule({

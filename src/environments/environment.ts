@@ -8,7 +8,7 @@ export const environment = {
   KEYCLOAK_REALM: 'FAB',
   KEYCLOAK_CLIENT_ID: 'ensino-client',
 
-  INDICADORES_FRONT_URL: 'http://localhost:4200/sisplaer-3.0'
+  INDICADORES_FRONT_URL: 'http://localhost:4200/esistens-indicadores'
 };
 
 /*
