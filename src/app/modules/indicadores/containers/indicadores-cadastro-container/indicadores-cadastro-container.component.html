@@ -1,7 +1,5 @@
-
-
 <div class="p-shadow-1" style="margin: 4rem;">
-    
+
     <button pButton label="Novo" icon="pi pi-plus" class="p-button-success p-mb-3"
         (click)="openDialogCreateIndicador()"></button>
 
@@ -52,25 +50,34 @@
     </p-table>
 
     <p-dialog header="{{indicador?.idIndicador ? 'Editar ':'Criar '}} indicador" [(visible)]="showDialogCreate"
-        [style]="{width: '40vw'}" [modal]="true" [closable]="false" class="p-fluid">
+        [style]="{width: '45vw'}" [modal]="true" [closable]="false" class="p-fluid">
         <ng-template pTemplate="content">
             <div class="p-field p-formgrid p-grid" *ngIf="!indicador?.idIndicador">
                 <div class="p-field p-col">
-                    <p-dropdown [options]="cursos" [(ngModel)]="cursoSelecionado"
-                        filterPlaceholder="Nenhum curso encontrado" placeholder="Selecione um curso" [filter]="true"
-                        filterBy="label,value.nmCapacitacao">
+                    <p-dropdown [options]="cursos" [(ngModel)]="cursoSelecionado" filterPlaceholder="Buscar por sigla"
+                        placeholder="Selecione um curso" [filter]="true" filterBy="label,title">
                         <ng-template let-curso pTemplate="item">
                             <div class="dropdown-item-container">
-                                <p style="font-weight: bolder; color: #175497;">{{curso.label}}</p>
-                                <p style="font-style: italic; font-size: small;">{{curso.value.nome}}</p>
+                                <span style="font-weight: bolder; font-size: 1.4rem">{{curso.label}}</span>
+                                <br>
+                                <span style="font-style: italic; font-size: 1.2rem;">{{curso.title}}</span>
                             </div>
                         </ng-template>
                     </p-dropdown>
                     <small class="p-invalid" *ngIf="!cursoSelecionado">Selecione um curso.</small>
                 </div>
+
                 <div class="p-field p-col">
-                    <p-dropdown [options]="orgsSubordinadas" [(ngModel)]="orgSelecionada" optionLabel="sigla"
-                        [filter]="true" filterBy="sigla" placeholder="Selecione uma organização">
+                    <p-dropdown [options]="orgsSubordinadas" [(ngModel)]="orgSelecionada" 
+                        filterPlaceholder="Buscar por sigla" placeholder="Selecione uma organização" [filter]="true"
+                        filterBy="label,title" >
+                        <ng-template let-curso pTemplate="item">
+                            <div class="dropdown-item-container">
+                                <span style="font-weight: bolder; font-size: 1.4rem;">{{curso.label}}</span>
+                                <br>
+                                <span style="font-style: italic; font-size: 1.2rem;">{{curso.title}}</span>
+                            </div>
+                        </ng-template>
                     </p-dropdown>
                     <small class="p-invalid" *ngIf="!orgSelecionada">Selecione uma organização.</small>
                 </div>
@@ -98,7 +105,7 @@
         <ng-template pTemplate="footer">
             <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-raised p-button-danger"
                 (click)="hideDialog()"></button>
-            <button pButton type="button" label="Salvar" icon="pi pi-times" class="p-button-raised"
+            <button pButton type="button" label="Salvar" icon="pi pi-check" class="p-button-raised" [disabled]="!cursoSelecionado"
                 (click)="saveIndicador()"></button>
         </ng-template>
     </p-dialog>

@@ -5,6 +5,8 @@ import { Indicador } from './../../../../models/indicador.model';
 import { Component, OnInit } from '@angular/core';
 import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
 import { IndicadoresFacade } from '../indicadores-facade';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-indicadores-cadastro-container',
@@ -15,9 +17,11 @@ import { IndicadoresFacade } from '../indicadores-facade';
 export class IndicadoresCadastroContainerComponent implements OnInit {
   public indicadores: Indicador[];
   public indicadoresSelecionados: Indicador[];
-  public indicador: Indicador;
+  public indicador: Indicador = {};
   public cursoSelecionado: Curso;
   public cursos: SelectItem[];
+  public orgSelecionada: Organizacao | undefined;
+  public orgsSubordinadas: SelectItem[];
   public showDialogCreate = false;
 
   public pessoaLogada: PessoaLogada = {
@@ -28,8 +32,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
     },
     roles: []
   };
-  public orgSelecionada: Organizacao;
-  public orgsSubordinadas: Organizacao[];
+  
 
 
 
@@ -40,18 +43,37 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.buscarIndicadores();
+    this.buscarIndicadores().subscribe(response => this.indicadores = response);
   }
 
-  buscarIndicadores(): void{
-    this.facade.findAllIndicadores('cdOrg').subscribe(response => this.indicadores = response);
+  buscarIndicadores(): Observable<Indicador[]> {
+    return this.facade.findAllIndicadores(this.pessoaLogada.pessoa.organizacao?.cdOrg);
   }
 
   openDialogCreateIndicador(): void {
-    // this.organizacaoService.findOrganizacoesSubordinadas(this.cdOrgLogado)
-    //   .subscribe(response => this.listaOrganizacoesSubordinadas = response);
-    // this.organizacaoSelecionada = this.pessoaLogada.pessoa.organizacao;
-    this.showDialogCreate = true;
+    this.facade.findOrganizacoesSubordinadas(this.pessoaLogada.pessoa.organizacao?.cdOrg)
+      .subscribe(response => {
+        const itens = response.map(org => {
+          const item: SelectItem = {
+            label: org.sigla,
+            title: org.nome,
+            value: org
+          };
+
+          return item;
+        });
+        this.orgsSubordinadas = itens;
+        this.orgSelecionada = this.pessoaLogada.pessoa.organizacao;
+        this.showDialogCreate = true;
+      });
+
+    this.facade.findAllCapacitacao().subscribe(response =>
+      this.cursos = response.map(curso => ({
+        label: curso.sigla,
+        title: curso.nome,
+        value: curso
+      }))
+    );
   }
 
   edit(indicador: Indicador): void {
@@ -67,7 +89,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
         this.facade.deleteIndicador(indicador.idIndicador)
           .subscribe(
             () => {
-              this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso'});
+              this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso' });
               this.buscarIndicadores();
             },
             e => this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao apagar indicador', life: 3000 }));
@@ -85,6 +107,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   }
 
   saveIndicador(): void {
+    console.log(this.cursoSelecionado)
     if (!this.cursoSelecionado) {
       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'É necessário selecionar um curso o indicador', life: 3000 });
     }
