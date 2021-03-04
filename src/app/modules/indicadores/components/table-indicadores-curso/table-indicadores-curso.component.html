@@ -4,7 +4,6 @@
         <ng-template pTemplate="header">
             <tr>
                 <th class="p-text-center">Organização</th>
-                <th class="p-text-center">Especificação Quadro/Espcialidade</th>
                 <th class="p-text-center">Mínimo</th>
                 <th class="p-text-center">Ideal</th>
                 <th class="p-text-center">Existente</th>
@@ -15,12 +14,6 @@
         <ng-template pTemplate="body" let-indicador>
             <tr>
                 <td class="p-text-center">{{indicador.sgOrganizacao}}</td>
-                <td id="linha" class="p-text-center">
-                    <span *ngIf="!indicador.quadroEspecialidade.length">-</span>
-                    <ng-container *ngFor="let quadroEspc of indicador.quadroEspecialidade">
-                        <span class="p-tag" style="margin: 3px;">{{quadroEspc.sgQuadro}}/{{quadroEspc.sgEspecialidade}}</span>
-                    </ng-container>
-                </td>
                 <td class="p-text-center">{{indicador.minimo}}</td>
                 <td class="p-text-center">{{indicador.ideal}}</td>
                 <td class="p-text-center">

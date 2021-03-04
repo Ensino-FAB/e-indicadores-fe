@@ -1,4 +1,49 @@
 <section>
     <div class="p-shadow-1" style="margin: 4rem;">
+        <div class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 10px 10px 10px 20px;">
+            <h2>Pesquisar indicadores</h2>
+        </div>
+        <div class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 10px 10px 0 10px;">
+            <div class="p-field p-col">
+                <p-dropdown id="curso" [options]="listaDeCursos" [(ngModel)]="cursoSelecionado"
+                    emptyFilterMessage="Nenhum curso encontrado" placeholder="Todos os cursos" [filter]="true"
+                    filterBy="label,value.nmCapacitacao" [showClear]="true">
+                    <ng-template let-curso pTemplate="item">
+                        <div class="dropdown-item-container">
+                            <p style="font-weight: bolder; color: #175497;">{{curso.label}}</p>
+                            <p style="font-style: italic; font-size: small;">{{curso.value.nome}}</p>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="p-field p-col">
+                <p-dropdown id="org" [options]="listaOrganizacoesSubordinadas" [(ngModel)]="organizacaoSelecionada"
+                    optionLabel="sigla" [filter]="true" filterBy="sigla" placeholder="Selecione uma organização"
+                    emptyFilterMessage="Nenhuma OM encontrada">
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 0 10px 20px 20px;">
+            <div class="p-formgroup-inline">
+                <div class="p-field-checkbox">
+                    <p-checkbox [(ngModel)]="subordinadas" [binary]="true"></p-checkbox>
+                    <label for="subordinadas">incluir subordinadas</label>
+                </div>
+            </div>
+            <div class="p-field p-col-2">
+                <button pButton pRipple type="button" label="Pesquisar" class="p-button-raised"
+                    (click)="buscarIndicadores()"></button>
+            </div>
+        </div>
+
+        <h2 *ngIf="showTableOmIndicadores || indicadoresAgrupados.length" class="headline">Resultado da pesquisa</h2>
+        <div *ngIf="indicadoresAgrupados.length">
+            <div *ngFor="let ind of indicadoresAgrupados" style="margin: 1rem; border: dashed 1px #bbb;">
+                <app-table-indicadores-curso [indicadores]="ind.indicadores"> </app-table-indicadores-curso>
+            </div>
+        </div>
+        <div *ngIf="showTableOmIndicadores" style="margin: 1rem; border: dashed 1px #bbb;">
+            <app-table-indicadores-om [indicadores]="indicadores"> </app-table-indicadores-om>
+        </div>
     </div>
 </section>

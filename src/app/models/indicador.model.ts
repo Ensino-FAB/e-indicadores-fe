@@ -25,3 +25,8 @@ export interface IndicadorCreate {
     ideal: number;
     txObsevacoes: string;
 }
+
+export interface IndicadorAgrupado {
+    idCurso: number;
+    indicadores: Indicador[];
+}
