@@ -17,7 +17,7 @@ import { BaseWrapperModule } from './shared/components/base-wrapper/base-wrapper
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    BaseWrapperModule,
+    BaseWrapperModule
   ],
   providers: [],
   bootstrap: [AppComponent]

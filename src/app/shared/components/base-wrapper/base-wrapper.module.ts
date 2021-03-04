@@ -6,8 +6,6 @@ import { BaseWrapperComponent } from './base-wrapper.component';
 
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
 
 import { LoadingBarModule } from './../loading-bar/loading-bar.module';
 import { LoadingBarService } from './../../services/loading-bar.service';
@@ -22,13 +20,11 @@ import { LoggingInterceptor } from './../../interceptors/logging-interceptor';
     AvatarModule,
     ButtonModule,
     LoadingBarModule,
-    ToastModule,
     RouterModule
   ],
   exports: [BaseWrapperComponent],
   providers: [
     LoadingBarService,
-    MessageService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptor,

@@ -1,3 +1,4 @@
+import { ToastModule } from 'primeng/toast';
 import { IndicadoresFacade } from './containers/indicadores-facade';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -14,6 +15,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToolbarModule } from 'primeng/toolbar';
 import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -29,6 +32,9 @@ import { FormsModule } from '@angular/forms';
     InputNumberModule,
     ToolbarModule,
     FormsModule,
+    ToastModule,
+    AutoCompleteModule,
+    ReactiveFormsModule,
     RouterModule.forChild(INDICADORES_ROUTES)
   ],
   providers: [IndicadoresFacade]
