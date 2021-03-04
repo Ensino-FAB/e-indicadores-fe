@@ -1,0 +1,40 @@
+<div class="card p-m-3">
+    <h3 style="text-align: center;">{{nomeCurso}}</h3>
+    <p-table #dt [value]="indicadores" styleClass="p-datatable-striped p-datatable-sm">
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="p-text-center">Organização</th>
+                <th class="p-text-center">Especificação Quadro/Espcialidade</th>
+                <th class="p-text-center">Mínimo</th>
+                <th class="p-text-center">Ideal</th>
+                <th class="p-text-center">Existente</th>
+                <th class="p-text-center">Gap Mínimo</th>
+                <th class="p-text-center">Gap Ideal</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-indicador>
+            <tr>
+                <td class="p-text-center">{{indicador.sgOrganizacao}}</td>
+                <td id="linha" class="p-text-center">
+                    <span *ngIf="!indicador.quadroEspecialidade.length">-</span>
+                    <ng-container *ngFor="let quadroEspc of indicador.quadroEspecialidade">
+                        <span class="p-tag" style="margin: 3px;">{{quadroEspc.sgQuadro}}/{{quadroEspc.sgEspecialidade}}</span>
+                    </ng-container>
+                </td>
+                <td class="p-text-center">{{indicador.minimo}}</td>
+                <td class="p-text-center">{{indicador.ideal}}</td>
+                <td class="p-text-center">
+                    <button pButton icon="pi pi-search-plus" class="p-button-raised p-button-text p-button-primary p-mr-2"
+                    (click)="buscaDiplomados(indicador)" *ngIf="indicador.existente"></button>{{indicador.existente}}               
+                </td>
+                <td class="p-text-center">{{indicador.gapMinimo}}</td> 
+                <td class="p-text-center">{{indicador.gapIdeal}}</td> 
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="p-d-flex p-ai-center p-jc-between">
+                São {{indicadores ? indicadores.length : 0 }} indicadores no total.
+            </div>
+        </ng-template>
+    </p-table>
+</div>

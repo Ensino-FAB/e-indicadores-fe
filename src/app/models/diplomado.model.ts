@@ -1,4 +1,4 @@
-export interface Diplomados {
+export interface Diplomado {
     nome?: string;
     quadro?: string;
     posto?: string;

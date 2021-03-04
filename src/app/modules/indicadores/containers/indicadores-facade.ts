@@ -1,12 +1,13 @@
+import { Diplomado } from '../../../models/diplomado.model';
 import { Curso } from './../../../models/curso.model';
 import { Organizacao } from './../../../models/organizacao.model';
 import { Indicador } from './../../../models/indicador.model';
 import { Injectable } from '@angular/core';
-import { Observable, of, timer } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 @Injectable()
 export class IndicadoresFacade {
+
   private lista: Indicador[] = [];
 
   constructor() {
@@ -23,7 +24,7 @@ export class IndicadoresFacade {
     return of([]);
   }
 
-  findOrganizacoesSubordinadas(cdOrg: string | undefined): Observable<Organizacao[]>{
+  findOrganizacoesSubordinadas(cdOrg: string | undefined): Observable<Organizacao[]> {
     return of([
       { id: 1, nome: 'Organização 01', sigla: 'ORG1' },
       { id: 2, nome: 'Organização 02', sigla: 'ORG2' },
@@ -34,19 +35,40 @@ export class IndicadoresFacade {
     ]);
   }
 
-  findAllCapacitacao(): Observable<Curso[]>{
+  findAllCapacitacao(): Observable<Curso[]> {
     return of([
-      {id: 1, nome: 'Curso 1', sigla: 'C1'},
-      {id: 2, nome: 'Curso 2', sigla: 'C2'},
-      {id: 3, nome: 'Curso 3', sigla: 'C3'},
-      {id: 4, nome: 'Curso 4', sigla: 'C4'},
-      {id: 5, nome: 'Curso 5', sigla: 'C5'},
-      {id: 6, nome: 'Curso 6', sigla: 'C6'},
-      {id: 7, nome: 'Curso 7', sigla: 'C7'},
-      {id: 8, nome: 'Curso 8', sigla: 'C8'},
-      {id: 9, nome: 'Curso 9', sigla: 'C9'},
-      {id: 10, nome: 'Curso 10', sigla: 'C10'}
+      { id: 1, nome: 'Curso 1', sigla: 'C1' },
+      { id: 2, nome: 'Curso 2', sigla: 'C2' },
+      { id: 3, nome: 'Curso 3', sigla: 'C3' },
+      { id: 4, nome: 'Curso 4', sigla: 'C4' },
+      { id: 5, nome: 'Curso 5', sigla: 'C5' },
+      { id: 6, nome: 'Curso 6', sigla: 'C6' },
+      { id: 7, nome: 'Curso 7', sigla: 'C7' },
+      { id: 8, nome: 'Curso 8', sigla: 'C8' },
+      { id: 9, nome: 'Curso 9', sigla: 'C9' },
+      { id: 10, nome: 'Curso 10', sigla: 'C10' }
     ]);
+  }
+
+  findAllDiplomados(data: any): Observable<Diplomado[]> {
+    const dip: Diplomado = {
+      nome: 'Pessoa',
+      quadro: 'QCOA',
+      posto: '1T',
+      especialidade: 'ANS',
+      idOrgRealizacao: '2',
+      sgOrgRealizacao: 'CCA-RJ',
+      dataInicio: new Date(),
+      dataTermino: new Date(),
+    };
+
+    const diplomados: Diplomado[] = [];
+
+    for (let i = 0; i < 30; i++) {
+      diplomados.push(dip);
+    }
+
+    return of(diplomados);
   }
 
 

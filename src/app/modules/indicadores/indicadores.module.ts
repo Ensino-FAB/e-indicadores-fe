@@ -17,10 +17,13 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { FormsModule } from '@angular/forms';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TableIndicadoresCursoComponent } from './components/table-indicadores-curso/table-indicadores-curso.component';
+import { TableIndicadoresOmComponent } from './components/table-indicadores-om/table-indicadores-om.component';
+import { DiplomadosListComponent } from './components/diplomados-list/diplomados-list.component';
 
 
 @NgModule({
-  declarations: [IndicadoresCadastroContainerComponent, IndicadoresConsultaContainerComponent],
+  declarations: [IndicadoresCadastroContainerComponent, IndicadoresConsultaContainerComponent, TableIndicadoresCursoComponent, TableIndicadoresOmComponent, DiplomadosListComponent],
   imports: [
     CommonModule,
     DialogModule,

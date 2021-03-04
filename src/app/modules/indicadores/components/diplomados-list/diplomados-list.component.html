@@ -1,0 +1,27 @@
+<!-- <h2 class="p-mb-4 p-ml-3">Diplomados</h2> -->
+<div class="card p-m-3">
+    <p-table #dt [value]="diplomados" styleClass="p-datatable-striped p-datatable-sm" >
+        <ng-template pTemplate="header">
+            <tr>
+                <th class="p-text-center">Posto</th>
+                <th class="p-text-center">Quadro</th>
+                <th class="p-text-center">Especialidade</th>
+                <th class="p-text-center">Nome</th>
+                <th class="p-text-center">Local da Realização</th>
+                <th class="p-text-center">Início</th>
+                <th class="p-text-center">Término</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-diplomados>
+            <tr>
+                <td class="p-text-center">{{diplomados.posto}}</td>
+                <td class="p-text-center">{{diplomados.quadro}}</td>
+                <td class="p-text-center">{{diplomados.especialidade}}</td>
+                <td class="p-text-center">{{diplomados.nome}}</td>
+                <td class="p-text-center">{{diplomados.sgOrgRealizacao}}</td>
+                <td class="p-text-center">{{diplomados.dataInicio | date:'dd/MM/yyyy'}}</td>
+                <td class="p-text-center">{{diplomados.dataTermino | date:'dd/MM/yyyy'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
