@@ -4,7 +4,6 @@
             <tr>
                 <th class="p-text-center" style="width: 7%">Código</th>
                 <th class="p-text-center" style="width: 30%">Nome</th>
-                <th class="p-text-center">Especificação Quadro/Espcialidade</th>
                 <th class="p-text-center">Organização</th>
                 <th class="p-text-center">Mínimo</th>
                 <th class="p-text-center">Ideal</th>
@@ -17,17 +16,14 @@
             <tr>
                 <td class="p-text-center">{{indicador.sgCurso}}</td>
                 <td class="p-text-center">{{indicador.nmCurso}}</td>
-                <td id="linha" class="p-text-center">
-                    <ng-container *ngFor="let quadroEspc of indicador.quadroEspecialidade">
-                        <span class="p-tag" style="margin: 3px;">{{quadroEspc.sgQuadro}}/{{quadroEspc.sgEspecialidade}}</span>
-                    </ng-container>
-                </td>
                 <td class="p-text-center">{{indicador.sgOrganizacao}}</td>
                 <td class="p-text-center">{{indicador.minimo}}</td>
                 <td class="p-text-center">{{indicador.ideal}}</td> 
                 <td class="p-text-center">
-                    <button pButton icon="pi pi-search-plus" class="p-button-raised p-button-text p-button-primary p-mr-2"
-                    (click)="buscaDiplomados(indicador)" *ngIf="indicador.existente"></button>{{indicador.existente}}               
+                    <a *ngIf="indicador.existente" (click)="buscaDiplomados(indicador)" style="cursor: pointer;">
+                        <p-badge [value]="indicador.existente" severity="success"></p-badge>
+                    </a>
+                    <span *ngIf="!indicador.existente">-</span>        
                 </td>
                 <td class="p-text-center">{{indicador.gapMinimo}}</td> 
                 <td class="p-text-center">{{indicador.gapIdeal}}</td> 

@@ -7,7 +7,8 @@ import { DiplomadosListComponent } from '../diplomados-list/diplomados-list.comp
 @Component({
   selector: 'app-table-indicadores-curso',
   templateUrl: './table-indicadores-curso.component.html',
-  styleUrls: ['./table-indicadores-curso.component.scss']
+  styleUrls: ['./table-indicadores-curso.component.scss'],
+  providers: [DialogService]
 })
 export class TableIndicadoresCursoComponent {
 
@@ -23,7 +24,8 @@ export class TableIndicadoresCursoComponent {
         idCurso: indicador.idCurso,
       },
       header: `Diplomados do ${indicador.nmCurso}`,
-      width: '70%'
+      width: '70vw',
+      height: '70vh'
     });
   }
 

@@ -1,26 +1,29 @@
 <section>
-    <div class="p-shadow-1" style="margin: 4rem;">
-        <div class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 10px 10px 10px 20px;">
-            <h2>Pesquisar indicadores</h2>
-        </div>
-        <div class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 10px 10px 0 10px;">
+    <div class="p-shadow-1" style="margin: 4rem; padding-top: 1.5rem;">
+        <div [formGroup]='consultaForm' class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 10px 10px 0 10px;">
             <div class="p-field p-col">
-                <p-dropdown id="curso" [options]="listaDeCursos" [(ngModel)]="cursoSelecionado"
-                    emptyFilterMessage="Nenhum curso encontrado" placeholder="Todos os cursos" [filter]="true"
-                    filterBy="label,value.nmCapacitacao" [showClear]="true">
+                <p-autoComplete field="label" formControlName="curso" [suggestions]="cursos"
+                    (completeMethod)="searchCursos($event)" [dropdown]="true" [minLength]="3">
                     <ng-template let-curso pTemplate="item">
                         <div class="dropdown-item-container">
-                            <p style="font-weight: bolder; color: #175497;">{{curso.label}}</p>
-                            <p style="font-style: italic; font-size: small;">{{curso.value.nome}}</p>
+                            <span style="font-weight: bolder; font-size: 1.4rem">{{curso.label}}</span>
+                            <br>
+                            <span style="font-style: italic; font-size: 1.2rem;">{{curso.title}}</span>
                         </div>
                     </ng-template>
-                </p-dropdown>
+                </p-autoComplete>
             </div>
             <div class="p-field p-col">
-                <p-dropdown id="org" [options]="listaOrganizacoesSubordinadas" [(ngModel)]="organizacaoSelecionada"
-                    optionLabel="sigla" [filter]="true" filterBy="sigla" placeholder="Selecione uma organização"
-                    emptyFilterMessage="Nenhuma OM encontrada">
-                </p-dropdown>
+                <p-autoComplete field="label" formControlName="org" [suggestions]="orgsSubordinadas"
+                    (completeMethod)="searchOrgsSubordinadas($event)" [dropdown]="true" [minLength]="3">
+                    <ng-template let-curso pTemplate="item">
+                        <div class="dropdown-item-container">
+                            <span style="font-weight: bolder; font-size: 1.4rem;">{{curso.label}}</span>
+                            <br>
+                            <span style="font-style: italic; font-size: 1.2rem;">{{curso.title}}</span>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
             </div>
         </div>
         <div class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 0 10px 20px 20px;">

@@ -4,6 +4,8 @@ import { Curso } from './../../../../models/curso.model';
 import { Organizacao } from './../../../../models/organizacao.model';
 import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
+import { PessoaLogada } from './../../../../models/pessoa.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-indicadores-consulta-container',
@@ -12,28 +14,59 @@ import { SelectItem } from 'primeng/api';
 })
 export class IndicadoresConsultaContainerComponent implements OnInit {
 
-  public organizacaoSelecionada: Organizacao;
-  public listaOrganizacoesSubordinadas: Organizacao[];
-  public cursoSelecionado: Curso;
-  public listaDeCursos: SelectItem[];
+  public orgsSubordinadas: SelectItem[];
+  public cursos: SelectItem[];
   public cdOrgLogado: string;
-  public subordinadas = false;
   public indicadores: Indicador[];
   public indicadoresAgrupados: IndicadorAgrupado[] = [];
   public idCursos: number;
   public showTableOmIndicadores: boolean;
+  public subordinadas = false;
 
-  constructor(private facade: IndicadoresFacade) {
+  public consultaForm: FormGroup;
+
+  public pessoaLogada: PessoaLogada;
+
+  constructor(
+    private facade: IndicadoresFacade,
+    private fb: FormBuilder
+  ) {
 
   }
 
   ngOnInit(): void {
-    //Buscar pessoa Logada
+    this.buildForm();
+
+    this.pessoaLogada = {
+      pessoa: {
+        id: 15,
+        nome: 'Fulano',
+        organizacao: { id: 5, nome: 'Organização Logada', sigla: 'ORG5' }
+      },
+      roles: []
+    };
+    this.org?.setValue(
+      {
+        label: this.pessoaLogada.pessoa.organizacao?.sigla,
+        title: this.pessoaLogada.pessoa.organizacao?.nome,
+        value: this.pessoaLogada.pessoa.organizacao
+      }
+    );
+
     this.facade.findOrganizacoesSubordinadas(this.cdOrgLogado)
-      .subscribe(response => this.listaOrganizacoesSubordinadas = response);
+      .subscribe(
+        response =>
+          this.orgsSubordinadas = response.map(org => {
+            const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
+            return item;
+          })
+      );
+
+
     this.facade.findAllCapacitacao().subscribe(response =>
-      this.listaDeCursos = response.map(curso => ({
+      this.cursos = response.map(curso => ({
         label: curso.sigla,
+        title: curso.nome,
         value: curso
       }))
     );
@@ -44,9 +77,12 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
     this.indicadores = [];
     this.showTableOmIndicadores = false;
 
+    let cursoSelecionado = this.curso?.value;
+    let organizacaoSelecionada = this.org?.value;
+
     if (!this.subordinadas) {
-      if (!this.cursoSelecionado) {
-        this.facade.findIndicadores(this.organizacaoSelecionada.id)
+      if (!cursoSelecionado) {
+        this.facade.findIndicadores(organizacaoSelecionada.id)
           .subscribe(response => {
             this.showTableOmIndicadores = true;
             this.indicadores = response;
@@ -54,24 +90,24 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
         return;
       }
 
-      if (this.cursoSelecionado) {
-        this.facade.findIndicadoresPorCursoOrganizacao(this.organizacaoSelecionada.id, this.cursoSelecionado.id)
+      if (cursoSelecionado) {
+        this.facade.findIndicadoresPorCursoOrganizacao(organizacaoSelecionada.id, cursoSelecionado.id)
           .subscribe(response => {
             this.fillIndicadoresAgrupados(response);
           });
         return;
       }
     } else {
-      if (!this.cursoSelecionado) {
-        this.facade.findIndicadoresOrganizacoesESubordinadas(this.organizacaoSelecionada.id)
+      if (!cursoSelecionado) {
+        this.facade.findIndicadoresOrganizacoesESubordinadas(organizacaoSelecionada.id)
           .subscribe(response => {
             this.fillIndicadoresAgrupados(response);
           });
         return;
       }
 
-      if (this.cursoSelecionado) {
-        this.facade.findIndicadoresPorCursoOrganizacaoSubordinadas(this.organizacaoSelecionada.id, this.cursoSelecionado.id)
+      if (cursoSelecionado) {
+        this.facade.findIndicadoresPorCursoOrganizacaoSubordinadas(organizacaoSelecionada.id, cursoSelecionado.id)
           .subscribe(response => {
             this.fillIndicadoresAgrupados(response);
           });
@@ -91,6 +127,54 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
         }
       );
     });
+  }
+
+  searchCursos(event: any): void {
+    this.facade.findAllCapacitacao().subscribe(response => {
+      this.cursos = response.map(curso => ({
+        label: curso.sigla,
+        title: curso.nome,
+        value: curso
+      }));
+    }
+    );
+  }
+
+  searchOrgsSubordinadas(event: any): void {
+    this.facade.findOrganizacoesSubordinadas(this.pessoaLogada.pessoa.organizacao?.cdOrg)
+      .subscribe(response => {
+        const orgLogada = this.pessoaLogada.pessoa.organizacao;
+
+        const itens = response.map(org => {
+          const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
+          return item;
+        }).filter(org => org.value.id !== orgLogada?.id);
+        this.orgsSubordinadas = itens;
+
+        this.orgsSubordinadas.unshift({ label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada })
+      });
+  }
+
+  resetForms(): void {
+    this.consultaForm.reset({
+      org: null,
+      curso: null,
+    });
+  }
+
+  buildForm(): void {
+    this.consultaForm = this.fb.group({
+      org: this.fb.control(null),
+      curso: this.fb.control(null),
+    });
+  }
+
+  get curso() {
+    return this.consultaForm.get('curso');
+  }
+
+  get org() {
+    return this.consultaForm.get('org');
   }
 
 }

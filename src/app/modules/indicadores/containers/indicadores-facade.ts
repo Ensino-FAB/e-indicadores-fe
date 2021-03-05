@@ -159,7 +159,7 @@ export class IndicadoresFacade {
       nmCurso: 'Curso de Aperfeiçoamento ',
       dtInclusao: new Date(),
       dtUltimaAtualizacao: new Date(),
-      existente: this.getRandomInt(1, 8),
+      existente: this.getRandomInt(0, 8),
       gapMinimo: this.getRandomInt(1, 5),
       gapIdeal: this.getRandomInt(1, 6),
       txObsevacoes: 'Observações...'

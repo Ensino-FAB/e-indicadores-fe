@@ -17,6 +17,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ToolbarModule } from 'primeng/toolbar';
 import { FormsModule } from '@angular/forms';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { BadgeModule } from 'primeng/badge';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TableIndicadoresCursoComponent } from './components/table-indicadores-curso/table-indicadores-curso.component';
 import { DiplomadosListComponent } from './components/diplomados-list/diplomados-list.component';
@@ -46,6 +47,7 @@ import { TableIndicadoresOmComponent } from './components/table-indicadores-om/t
     AutoCompleteModule,
     CheckboxModule,
     ReactiveFormsModule,
+    BadgeModule,
     RouterModule.forChild(INDICADORES_ROUTES)
   ],
   providers: [IndicadoresFacade]

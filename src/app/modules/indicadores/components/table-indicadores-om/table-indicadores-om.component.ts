@@ -6,7 +6,8 @@ import { DiplomadosListComponent } from '../diplomados-list/diplomados-list.comp
 @Component({
   selector: 'app-table-indicadores-om',
   templateUrl: './table-indicadores-om.component.html',
-  styleUrls: ['./table-indicadores-om.component.scss']
+  styleUrls: ['./table-indicadores-om.component.scss'],
+  providers: [DialogService]
 })
 export class TableIndicadoresOmComponent implements OnInit {
 
@@ -26,7 +27,8 @@ export class TableIndicadoresOmComponent implements OnInit {
         turmaCursoId: indicador.idCurso
       },
       header: `Diplomados do ${indicador.nmCurso}`,
-      width: '70%'
+      width: '70vw',
+      height: '70vh'
     });
   }
 
