@@ -16,7 +16,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 export class IndicadoresCadastroContainerComponent implements OnInit {
   public indicadores: Indicador[];
   public indicadoresSelecionados: Indicador[];
-  public indicador: Indicador = {};
+  public indicador: Indicador;
   public cursos: SelectItem[];
   public orgsSubordinadas: SelectItem[];
   public showDialogCreate = false;

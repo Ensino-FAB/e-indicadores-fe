@@ -7,24 +7,91 @@ import { Observable, of } from 'rxjs';
 
 @Injectable()
 export class IndicadoresFacade {
-
   private lista: Indicador[] = [];
 
   constructor() {
     for (let i = 0; i < 9; i++) {
-      this.lista.push(this.gerarIndicador());
+      this.lista.push(this.gerarIndicador('32310'));
     }
   }
 
-  findAllIndicadores(cdOrg: string | undefined): Observable<Indicador[]> {
+  findIndicadores(idOrganizacao: number): Observable<Indicador[]> {
+    const indicadores: Indicador[] = [];
+
+    for (let i = 0; i < 20; i++) {
+      indicadores.push(this.gerarIndicador('32310'));
+    }
+
+    return of(indicadores);
+  }
+
+  findAllIndicadores(idOrg: string | undefined): Observable<Indicador[]> {
     return of(this.lista);
+  }
+
+  findIndicadoresOrganizacoesESubordinadas(idOrgSuperior: number): Observable<Indicador[]> {
+    const indicadores: Indicador[] = [];
+
+    for (let i = 0; i < 20; i++) {
+      indicadores.push(this.gerarIndicador('32310'));
+    }
+
+    for (let i = 0; i < 10; i++) {
+      indicadores.push(this.gerarIndicador('32311'));
+    }
+
+    for (let i = 0; i < 2; i++) {
+      indicadores.push(this.gerarIndicador('32312'));
+    }
+
+    for (let i = 0; i < 7; i++) {
+      indicadores.push(this.gerarIndicador('32313'));
+    }
+
+    this.shuffle(indicadores);
+
+    return of(indicadores);
+  }
+
+  findIndicadoresPorCursoOrganizacao(idOrg: number, idCurso: number | undefined): Observable<Indicador[]> {
+    const indicadores: Indicador[] = [];
+
+    for (let i = 0; i < 20; i++) {
+      indicadores.push(this.gerarIndicador('32310'));
+    }
+
+    return of(indicadores);
+  }
+
+  findIndicadoresPorCursoOrganizacaoSubordinadas(idOrg: number, idCurso: number | undefined): Observable<Indicador[]> {
+    const indicadores: Indicador[] = [];
+
+    for (let i = 0; i < 20; i++) {
+      indicadores.push(this.gerarIndicador('32310'));
+    }
+
+    for (let i = 0; i < 10; i++) {
+      indicadores.push(this.gerarIndicador('32311'));
+    }
+
+    for (let i = 0; i < 2; i++) {
+      indicadores.push(this.gerarIndicador('32312'));
+    }
+
+    for (let i = 0; i < 7; i++) {
+      indicadores.push(this.gerarIndicador('32313'));
+    }
+
+    this.shuffle(indicadores);
+
+    return of(indicadores);
   }
 
   deleteIndicador(idIndicador: number | undefined): Observable<any> {
     return of([]);
   }
 
-  findOrganizacoesSubordinadas(cdOrg: string | undefined): Observable<Organizacao[]> {
+  findOrganizacoesSubordinadas(idOrg: string | undefined): Observable<Organizacao[]> {
     return of([
       { id: 1, nome: 'Organização 01', sigla: 'ORG1' },
       { id: 2, nome: 'Organização 02', sigla: 'ORG2' },
@@ -79,12 +146,12 @@ export class IndicadoresFacade {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  gerarIndicador(): Indicador {
+  gerarIndicador(idOrg: string): Indicador {
     const indicador: Indicador = {
       idIndicador: this.getRandomInt(1, 1000),
       minimo: this.getRandomInt(1, 5),
       ideal: this.getRandomInt(1, 5),
-      cdOrg: '32310',
+      cdOrg: idOrg,
       nmOrganizacao: 'Diretoria...',
       sgOrganizacao: 'DIRAP',
       idCurso: this.getRandomInt(1, 1000),
@@ -99,5 +166,26 @@ export class IndicadoresFacade {
     };
 
     return indicador;
+  }
+
+  shuffle(array: Indicador[]): Indicador[] {
+    let currentIndex = array.length;
+    let temporaryValue;
+    let randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
   }
 }
