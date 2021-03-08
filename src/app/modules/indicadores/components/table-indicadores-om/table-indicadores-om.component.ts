@@ -23,10 +23,10 @@ export class TableIndicadoresOmComponent implements OnInit {
   buscaDiplomados(indicador: Indicador): void {
     const ref = this.dialogService.open(DiplomadosListComponent, {
       data: {
-        discenciaPessoaFisicaOrganizacaoMilitarId: indicador.cdOrg,
-        turmaCursoId: indicador.idCurso
+        idOrg: indicador.organizacao.cdOrg,
+        capacitacaoId: indicador.capacitacao.id
       },
-      header: `Diplomados do ${indicador.nmCurso}`,
+      header: `Diplomados do ${indicador.capacitacao.nome}`,
       width: '70vw',
       height: '70vh'
     });

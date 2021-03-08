@@ -1,7 +1,5 @@
 import { IndicadoresFacade } from './../indicadores-facade';
 import { Indicador, IndicadorAgrupado } from './../../../../models/indicador.model';
-import { Curso } from './../../../../models/curso.model';
-import { Organizacao } from './../../../../models/organizacao.model';
 import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { PessoaLogada } from './../../../../models/pessoa.model';
@@ -38,18 +36,17 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
     this.buildForm();
 
     this.pessoaLogada = {
-      pessoa: {
-        id: 15,
-        nome: 'Fulano',
-        organizacao: { id: 5, nome: 'Organização Logada', sigla: 'ORG5' }
-      },
+      id: 15,
+      nome: 'Fulano',
+      nrCpf: '12345678910',
+      organizacao: { id: 5, nome: 'Organização Logada', sigla: 'ORG5' },
       roles: []
     };
     this.org?.setValue(
       {
-        label: this.pessoaLogada.pessoa.organizacao?.sigla,
-        title: this.pessoaLogada.pessoa.organizacao?.nome,
-        value: this.pessoaLogada.pessoa.organizacao
+        label: this.pessoaLogada.organizacao?.sigla,
+        title: this.pessoaLogada.organizacao?.nome,
+        value: this.pessoaLogada.organizacao
       }
     );
 
@@ -65,7 +62,7 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
 
     this.facade.findAllCapacitacao().subscribe(response =>
       this.cursos = response.map(curso => ({
-        label: curso.sigla,
+        label: curso.codigo,
         title: curso.nome,
         value: curso
       }))
@@ -77,8 +74,8 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
     this.indicadores = [];
     this.showTableOmIndicadores = false;
 
-    let cursoSelecionado = this.curso?.value;
-    let organizacaoSelecionada = this.org?.value;
+    const cursoSelecionado = this.curso?.value;
+    const organizacaoSelecionada = this.org?.value;
 
     if (!this.subordinadas) {
       if (!cursoSelecionado) {
@@ -117,13 +114,13 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
   }
 
   fillIndicadoresAgrupados(response: Indicador[]): void {
-    const idCursoSet = new Set<number>();
-    response.map(indicador => indicador.idCurso).forEach(idCurso => idCursoSet.add(idCurso));
-    idCursoSet.forEach(idCurso => {
+    const idCapacitacaoSet = new Set<number>();
+    response.map(indicador => indicador.capacitacao.id).forEach(idCapacitacao => idCapacitacaoSet.add(idCapacitacao));
+    idCapacitacaoSet.forEach(idCapacitacao => {
       this.indicadoresAgrupados.push(
         {
-          idCurso,
-          indicadores: response.filter(indicador => indicador.idCurso === idCurso)
+          idCapacitacao,
+          indicadores: response.filter(indicador => indicador.capacitacao.id === idCapacitacao)
         }
       );
     });
@@ -132,7 +129,7 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
   searchCursos(event: any): void {
     this.facade.findAllCapacitacao().subscribe(response => {
       this.cursos = response.map(curso => ({
-        label: curso.sigla,
+        label: curso.codigo,
         title: curso.nome,
         value: curso
       }));
@@ -141,9 +138,9 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
   }
 
   searchOrgsSubordinadas(event: any): void {
-    this.facade.findOrganizacoesSubordinadas(this.pessoaLogada.pessoa.organizacao?.cdOrg)
+    this.facade.findOrganizacoesSubordinadas(this.pessoaLogada.organizacao?.cdOrg)
       .subscribe(response => {
-        const orgLogada = this.pessoaLogada.pessoa.organizacao;
+        const orgLogada = this.pessoaLogada.organizacao;
 
         const itens = response.map(org => {
           const item: SelectItem = { label: org.sigla, title: org.nome, value: org };

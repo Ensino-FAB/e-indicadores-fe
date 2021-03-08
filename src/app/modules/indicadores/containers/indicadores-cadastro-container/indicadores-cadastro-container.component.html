@@ -20,8 +20,8 @@
             </ng-template>
             <ng-template pTemplate="body" let-indicador>
                 <tr>
-                    <td class="p-text-center">{{indicador.sgCurso}}</td>
-                    <td class="p-text-center">{{indicador.nmCurso}}</td>
+                    <td class="p-text-center">{{indicador.capacitacao.codigo}}</td>
+                    <td class="p-text-center">{{indicador.capacitacao.nome}}</td>
                     <td class="p-text-center">{{indicador.minimo}}</td>
                     <td class="p-text-center">{{indicador.ideal}}</td>
                     <td class="p-text-center">{{indicador.existente}}</td>
@@ -34,7 +34,7 @@
                         <button pButton icon="pi pi-info-circle" class="p-button-raised p-button-text"
                             *ngIf="indicador.txObsevacoes" (click)="op.toggle($event)"></button>
                     </td>
-                    <td class="p-text-center">{{indicador.dtUltimaAtualizacao | date:'dd/MM/yyyy - HH:mm'}}</td>
+                    <td class="p-text-center">{{indicador.dataModificacao | date:'dd/MM/yyyy - HH:mm'}}</td>
                     <td class="p-text-center">
                         <button pButton icon="pi pi-pencil"
                             class="p-button-raised p-button-text p-button-success p-mr-2"
@@ -52,12 +52,12 @@
         </p-table>
 
 
-        <p-dialog header="{{indicador?.idIndicador ? 'Editar ':'Criar '}} indicador" [(visible)]="showDialogCreate"
+        <p-dialog header="{{indicador?.id ? 'Editar ':'Criar '}} indicador" [(visible)]="showDialogCreate"
             [style]="{width: '45vw'}" [modal]="true" [closable]="false" class="p-fluid">
             <ng-template pTemplate="content">
                 <form [formGroup]='indicadorForm'>
                     
-                    <div class="p-field p-formgrid p-grid" *ngIf="!indicador?.idIndicador">
+                    <div class="p-field p-formgrid p-grid" *ngIf="!indicador?.id">
                         <div class="p-field p-col">
                             <p-autoComplete field="label" formControlName="curso" [suggestions]="cursos"
                                 (completeMethod)="searchCursos($event)" [dropdown]="true" [minLength]="3">

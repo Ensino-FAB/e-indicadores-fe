@@ -1,10 +1,10 @@
+import { Capacitacao } from './capacitacao.model';
+import { Pessoa } from './pessoa.model';
 export interface Diplomado {
-    nome?: string;
-    quadro?: string;
-    posto?: string;
-    especialidade?: string;
-    idOrgRealizacao?: string;
-    sgOrgRealizacao?: string;
+    pessoa: Pessoa;
+    capacitacao: Capacitacao;
+    local?: string;
     dataInicio?: Date;
     dataTermino?: Date;
 }
+

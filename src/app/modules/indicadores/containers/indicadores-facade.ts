@@ -1,5 +1,5 @@
 import { Diplomado } from '../../../models/diplomado.model';
-import { Curso } from './../../../models/curso.model';
+import { Capacitacao } from '../../../models/capacitacao.model';
 import { Organizacao } from './../../../models/organizacao.model';
 import { Indicador } from './../../../models/indicador.model';
 import { Injectable } from '@angular/core';
@@ -102,29 +102,32 @@ export class IndicadoresFacade {
     ]);
   }
 
-  findAllCapacitacao(): Observable<Curso[]> {
+  findAllCapacitacao(): Observable<Capacitacao[]> {
     return of([
-      { id: 1, nome: 'Curso 1', sigla: 'C1' },
-      { id: 2, nome: 'Curso 2', sigla: 'C2' },
-      { id: 3, nome: 'Curso 3', sigla: 'C3' },
-      { id: 4, nome: 'Curso 4', sigla: 'C4' },
-      { id: 5, nome: 'Curso 5', sigla: 'C5' },
-      { id: 6, nome: 'Curso 6', sigla: 'C6' },
-      { id: 7, nome: 'Curso 7', sigla: 'C7' },
-      { id: 8, nome: 'Curso 8', sigla: 'C8' },
-      { id: 9, nome: 'Curso 9', sigla: 'C9' },
-      { id: 10, nome: 'Curso 10', sigla: 'C10' }
+      { id: 1, nome: 'Curso 1', codigo: 'C1' },
+      { id: 2, nome: 'Curso 2', codigo: 'C2' },
+      { id: 3, nome: 'Curso 3', codigo: 'C3' },
+      { id: 4, nome: 'Curso 4', codigo: 'C4' },
+      { id: 5, nome: 'Curso 5', codigo: 'C5' },
+      { id: 6, nome: 'Curso 6', codigo: 'C6' },
+      { id: 7, nome: 'Curso 7', codigo: 'C7' },
+      { id: 8, nome: 'Curso 8', codigo: 'C8' },
+      { id: 9, nome: 'Curso 9', codigo: 'C9' },
+      { id: 10, nome: 'Curso 10', codigo: 'C10' }
     ]);
   }
 
   findAllDiplomados(data: any): Observable<Diplomado[]> {
     const dip: Diplomado = {
-      nome: 'Pessoa',
-      quadro: 'QCOA',
-      posto: '1T',
-      especialidade: 'ANS',
-      idOrgRealizacao: '2',
-      sgOrgRealizacao: 'CCA-RJ',
+      pessoa: {
+        id: this.getRandomInt(1, 1000),
+        nome: 'pessoa',
+        nrCpf: '012345678910',
+        nrOrdem: '1234567',
+        siglaPosto: '1T',
+        organizacao: { id: this.getRandomInt(1, 1000), nome: 'Diretoria de ...', sigla: 'DIRAP', cdOrg: '313435' }
+      },
+      capacitacao: { id: 10, nome: 'Curso 10', codigo: 'C10' },
       dataInicio: new Date(),
       dataTermino: new Date(),
     };
@@ -148,17 +151,13 @@ export class IndicadoresFacade {
 
   gerarIndicador(idOrg: string): Indicador {
     const indicador: Indicador = {
-      idIndicador: this.getRandomInt(1, 1000),
+      id: this.getRandomInt(1, 1000),
       minimo: this.getRandomInt(1, 5),
       ideal: this.getRandomInt(1, 5),
-      cdOrg: idOrg,
-      nmOrganizacao: 'Diretoria...',
-      sgOrganizacao: 'DIRAP',
-      idCurso: this.getRandomInt(1, 1000),
-      sgCurso: 'CAS',
-      nmCurso: 'Curso de Aperfeiçoamento ',
-      dtInclusao: new Date(),
-      dtUltimaAtualizacao: new Date(),
+      capacitacao: { id: this.getRandomInt(1, 1000), nome: 'Curso de Capacitação', codigo: 'CdC' },
+      organizacao: { id: this.getRandomInt(1, 1000), nome: 'Diretoria de ...', sigla: 'DIRAP', cdOrg: '313435' },
+      dataCriacao: new Date(),
+      dataModificacao: new Date(),
       existente: this.getRandomInt(0, 8),
       gapMinimo: this.getRandomInt(1, 5),
       gapIdeal: this.getRandomInt(1, 6),

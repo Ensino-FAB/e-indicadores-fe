@@ -23,11 +23,10 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   public indicadorForm: FormGroup;
 
   public pessoaLogada: PessoaLogada = {
-    pessoa: {
-      id: 15,
-      nome: 'Fulano',
-      organizacao: { id: 5, nome: 'Organização Logada', sigla: 'ORG5' }
-    },
+    id: 15,
+    nome: 'Fulano',
+    nrCpf: '12345678910',
+    organizacao: { id: 5, nome: 'Organização Logada', sigla: 'ORG5' },
     roles: []
   };
 
@@ -46,7 +45,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   }
 
   buscarIndicadores(): Observable<Indicador[]> {
-    return this.facade.findAllIndicadores(this.pessoaLogada.pessoa.organizacao?.cdOrg);
+    return this.facade.findAllIndicadores(this.pessoaLogada.organizacao?.cdOrg);
   }
 
   openDialogCreateIndicador(): void {
@@ -63,7 +62,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
     this.confirmationService.confirm({
       message: 'Deseja apagar o indicador?',
       accept: () => {
-        this.facade.deleteIndicador(indicador.idIndicador)
+        this.facade.deleteIndicador(indicador.id)
           .subscribe(
             () => {
               this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso' });
@@ -91,9 +90,8 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
 
   saveIndicador(): void {
 
-    this.showDialogCreate = false;
     this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador salvo com sucesso', life: 3000 });
-
+    this.hideDialog();
 
     // if (this.indicador) {
     //   this.indicadoresService.edit(this.indicador).subscribe(
@@ -141,7 +139,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   searchCursos(event: any): void {
     this.facade.findAllCapacitacao().subscribe(response => {
       this.cursos = response.map(curso => ({
-        label: curso.sigla,
+        label: curso.codigo,
         title: curso.nome,
         value: curso
       }));
@@ -150,9 +148,9 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   }
 
   searchOrgsSubordinadas(event: any): void {
-    this.facade.findOrganizacoesSubordinadas(this.pessoaLogada.pessoa.organizacao?.cdOrg)
+    this.facade.findOrganizacoesSubordinadas(this.pessoaLogada.organizacao?.cdOrg)
       .subscribe(response => {
-        const orgLogada = this.pessoaLogada.pessoa.organizacao;
+        const orgLogada = this.pessoaLogada.organizacao;
 
         const itens = response.map(org => {
           const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
@@ -182,7 +180,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
     return this.indicadorForm.get('org');
   }
 
-  toogleDialog(): void{
+  toogleDialog(): void {
     this.showDialogCreate = !this.showDialogCreate;
   }
 

@@ -20,10 +20,10 @@ export class TableIndicadoresCursoComponent {
   buscaDiplomados(indicador: Indicador): void {
     const ref = this.dialogService.open(DiplomadosListComponent, {
       data: {
-        idOrg: indicador.cdOrg,
-        idCurso: indicador.idCurso,
+        idOrg: indicador.organizacao.id,
+        idCurso: indicador.capacitacao.id,
       },
-      header: `Diplomados do ${indicador.nmCurso}`,
+      header: `Diplomados do ${indicador.capacitacao.nome}`,
       width: '70vw',
       height: '70vh'
     });
@@ -31,7 +31,7 @@ export class TableIndicadoresCursoComponent {
 
   get nomeCurso(): string{
     if (this.indicadores){
-      return this.indicadores[0].sgCurso + ' - ' + this.indicadores[0].nmCurso;
+      return this.indicadores[0].capacitacao.codigo + ' - ' + this.indicadores[0].capacitacao.nome;
      }
 
     return '';

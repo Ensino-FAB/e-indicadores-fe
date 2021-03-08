@@ -1,32 +1,28 @@
-export interface Indicador {
-    idIndicador?: number;
+import { Organizacao } from './organizacao.model';
+import { BaseModel } from './base.model';
+import { Capacitacao } from './capacitacao.model';
+export interface Indicador extends BaseModel{
+    capacitacao: Capacitacao;
+    organizacao: Organizacao;
+    dataCriacao: Date;
+    dataModificacao: Date;
+    existente: number;
     minimo: number;
     ideal: number;
-    cdOrg: string;
-    nmOrganizacao: string;
-    sgOrganizacao: string;
-    idCurso: number;
-    sgCurso: string;
-    nmCurso: string;
-    dtInclusao: Date;
-    dtUltimaAtualizacao: Date;
-    existente: number;
     gapMinimo: number;
     gapIdeal: number;
     txObsevacoes: string;
 }
 
 export interface IndicadorCreate {
-    cdOrg: string;
-    idCurso: number;
-    dtInclusao: Date;
-    dtUltimaAtualizacao: Date;
+    idOrganizacao: number;
+    idCapacitacao: number;
     minimo: number;
     ideal: number;
     txObsevacoes: string;
 }
 
 export interface IndicadorAgrupado {
-    idCurso: number;
+    idCapacitacao: number;
     indicadores: Indicador[];
 }
