@@ -59,28 +59,28 @@
                     
                     <div class="p-field p-formgrid p-grid" *ngIf="!indicador?.id">
                         <div class="p-field p-col">
-                            <p-autoComplete field="label" formControlName="curso" [suggestions]="cursos"
-                                (completeMethod)="searchCursos($event)" [dropdown]="true" [minLength]="3">
-                                <ng-template let-curso pTemplate="item">
+                            <p-autoComplete field="label" formControlName="capacitacao" [suggestions]="capacitacoes"
+                                (completeMethod)="searchCapacitacao($event)" [dropdown]="true" [minLength]="3">
+                                <ng-template let-capacitacao pTemplate="item">
                                     <div class="dropdown-item-container">
-                                        <span style="font-weight: bolder; font-size: 1.4rem">{{curso.label}}</span>
+                                        <span style="font-weight: bolder; font-size: 1.4rem">{{capacitacao.label}}</span>
                                         <br>
-                                        <span style="font-style: italic; font-size: 1.2rem;">{{curso.title}}</span>
+                                        <span style="font-style: italic; font-size: 1.2rem;">{{capacitacao.title}}</span>
                                     </div>
                                 </ng-template>
                             </p-autoComplete>
-                            <small class="p-invalid" *ngIf="curso!.invalid && curso!.touched">
-                                Selecione um curso
+                            <small class="p-invalid" *ngIf="capacitacao!.invalid && capacitacao!.touched">
+                                Selecione uma capacitação
                             </small>
                         </div>
                         <div class="p-field p-col">
                             <p-autoComplete field="label" formControlName="org" [suggestions]="orgsSubordinadas"
                                 (completeMethod)="searchOrgsSubordinadas($event)" [dropdown]="true" [minLength]="3">
-                                <ng-template let-curso pTemplate="item">
+                                <ng-template let-org pTemplate="item">
                                     <div class="dropdown-item-container">
-                                        <span style="font-weight: bolder; font-size: 1.4rem;">{{curso.label}}</span>
+                                        <span style="font-weight: bolder; font-size: 1.4rem;">{{org.label}}</span>
                                         <br>
-                                        <span style="font-style: italic; font-size: 1.2rem;">{{curso.title}}</span>
+                                        <span style="font-style: italic; font-size: 1.2rem;">{{org.title}}</span>
                                     </div>
                                 </ng-template>
                             </p-autoComplete>

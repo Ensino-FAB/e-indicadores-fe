@@ -1,18 +1,33 @@
+import { OrganizacaoService } from './../../../service/organizacao.service';
+import { IndicadoresService } from './../../../service/indicadores.service';
 import { Diplomado } from '../../../models/diplomado.model';
 import { Capacitacao } from '../../../models/capacitacao.model';
 import { Organizacao } from './../../../models/organizacao.model';
-import { Indicador } from './../../../models/indicador.model';
+import { Indicador, IndicadorCreate } from './../../../models/indicador.model';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Injectable()
 export class IndicadoresFacade {
   private lista: Indicador[] = [];
 
-  constructor() {
+  constructor(
+    private indicadoresService: IndicadoresService,
+    private organizacaoService: OrganizacaoService
+  ) {
     for (let i = 0; i < 9; i++) {
       this.lista.push(this.gerarIndicador('32310'));
     }
+  }
+
+  createIndicador(indicador: IndicadorCreate): Observable<Indicador> {
+    //return this.http.post(`${this.endpoint}/cadastro/evento/${idEvento}`, record).pipe(take(1)) as Observable<Indicacao>;
+    return of(this.lista[0]);
+  }
+
+  editIndicador(indicador: IndicadorCreate): Observable<Indicador> {
+    return of(this.lista[0]);
   }
 
   findIndicadores(idOrganizacao: number): Observable<Indicador[]> {
@@ -91,15 +106,8 @@ export class IndicadoresFacade {
     return of([]);
   }
 
-  findOrganizacoesSubordinadas(idOrg: string | undefined): Observable<Organizacao[]> {
-    return of([
-      { id: 1, nome: 'Organização 01', sigla: 'ORG1' },
-      { id: 2, nome: 'Organização 02', sigla: 'ORG2' },
-      { id: 3, nome: 'Organização 03', sigla: 'ORG3' },
-      { id: 4, nome: 'Organização 04', sigla: 'ORG4' },
-      { id: 5, nome: 'Organização 05', sigla: 'ORG5' },
-      { id: 6, nome: 'Organização 06', sigla: 'ORG6' }
-    ]);
+  findOrganizacoesSubordinadas(idOrg: string): Observable<Organizacao[]> {
+    return this.organizacaoService.findOrganizacoesSubordinadas(idOrg).pipe(take(1));
   }
 
   findAllCapacitacao(): Observable<Capacitacao[]> {
@@ -161,7 +169,7 @@ export class IndicadoresFacade {
       existente: this.getRandomInt(0, 8),
       gapMinimo: this.getRandomInt(1, 5),
       gapIdeal: this.getRandomInt(1, 6),
-      txObsevacoes: 'Observações...'
+      txObservacoes: 'Observações...'
     };
 
     return indicador;

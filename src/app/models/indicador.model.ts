@@ -11,7 +11,7 @@ export interface Indicador extends BaseModel{
     ideal: number;
     gapMinimo: number;
     gapIdeal: number;
-    txObsevacoes: string;
+    txObservacoes: string;
 }
 
 export interface IndicadorCreate {
@@ -19,7 +19,7 @@ export interface IndicadorCreate {
     idCapacitacao: number;
     minimo: number;
     ideal: number;
-    txObsevacoes: string;
+    txObservacoes?: string;
 }
 
 export interface IndicadorAgrupado {

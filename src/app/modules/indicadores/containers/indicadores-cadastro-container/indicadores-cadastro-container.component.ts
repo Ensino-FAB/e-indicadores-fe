@@ -1,10 +1,12 @@
+import { UserService } from 'src/app/service/user.service';
 
-import { Indicador } from './../../../../models/indicador.model';
-import { Component, OnInit } from '@angular/core';
+import { Indicador, IndicadorCreate } from './../../../../models/indicador.model';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
 import { IndicadoresFacade } from '../indicadores-facade';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -13,14 +15,15 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
   styleUrls: ['./indicadores-cadastro-container.component.scss'],
   providers: [MessageService, ConfirmationService]
 })
-export class IndicadoresCadastroContainerComponent implements OnInit {
+export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy {
   public indicadores: Indicador[];
   public indicadoresSelecionados: Indicador[];
   public indicador: Indicador;
-  public cursos: SelectItem[];
+  public capacitacoes: SelectItem[];
   public orgsSubordinadas: SelectItem[];
   public showDialogCreate = false;
   public indicadorForm: FormGroup;
+  private subscriptions: Subscription;
 
   public pessoaLogada: any = {
     id: 15,
@@ -34,14 +37,17 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private facade: IndicadoresFacade,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private userService: UserService,
   ) { }
 
   ngOnInit(): void {
-
     this.buildForm();
-
     this.buscarIndicadores().subscribe(response => this.indicadores = response);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   buscarIndicadores(): Observable<Indicador[]> {
@@ -74,8 +80,9 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
 
   resetForms(): void {
     this.indicadorForm.reset({
+      id: null,
       org: null,
-      curso: null,
+      capacitacao: null,
       minimo: 0,
       ideal: 0,
       observacoes: '',
@@ -88,98 +95,81 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   }
 
   saveIndicador(): void {
+    const { org, capacitacao, ideal, minimo, txObservacoes } = this.indicadorForm.value;
 
-    this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador salvo com sucesso', life: 3000 });
+    const data: IndicadorCreate = {
+      idCapacitacao: capacitacao.value.id,
+      idOrganizacao: org.value.id,
+      ideal,
+      minimo,
+      txObservacoes
+    }
+
+    if (!this.indicadorId) {
+
+
+      this.facade.createIndicador(data).subscribe(response => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador salvo com sucesso', life: 3000 });
+        console.log('dado salvo', response);
+      });
+    } else {
+      this.facade.editIndicador(data).subscribe(response => {
+        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador editado com sucesso', life: 3000 });
+        console.log('dado editado', response);
+      });
+    }
+
     this.hideDialog();
-
-    // if (this.indicador) {
-    //   this.indicadoresService.edit(this.indicador).subscribe(
-    //     result => {
-    //       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador salvo com sucesso', life: 3000 });
-    //       this.buscarIndicadores();
-    //     },
-    //     err => {
-    //       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao editar indicador', life: 3000 });
-    //     },
-    //     () => {
-    //       this.showDialogCreate = false;
-    //       this.resetForms();
-    //     }
-    //   );
-    // } else {
-    //   let indicadorCreate: IndicadorCreateModel;
-
-    //   indicadorCreate = {
-    //     cdOrg: this.organizacaoSelecionada.id,
-    //     idCurso: this.cursoSelecionado.id,
-    //     dtInclusao: new Date(),
-    //     dtUltimaAtualizacao: new Date(),
-    //     minimo: this.indicador.minimo,
-    //     ideal: this.indicador.ideal,
-    //     txObsevacoes: this.indicador.txObsevacoes,
-    //   };
-
-    //   this.indicadoresService.save(indicadorCreate).subscribe(
-    //     result => {
-    //       this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador criado com sucesso', life: 3000 });
-    //       this.buscarIndicadores();
-    //     },
-    //     err => {
-    //       this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao cadastrar indicador', life: 3000 });
-    //     },
-    //     () => {
-    //       this.showDialogCreate = false;
-    //       this.resetForms();
-    //     }
-    //   );
-    // }
   }
 
-  searchCursos(event: any): void {
+  searchCapacitacao(event: any): void {
     this.facade.findAllCapacitacao().subscribe(response => {
-      this.cursos = response.map(curso => ({
-        label: curso.codigo,
-        title: curso.nome,
-        value: curso
+      this.capacitacoes = response.map(capacitacao => ({
+        label: capacitacao.codigo,
+        title: capacitacao.nome,
+        value: capacitacao
       }));
     }
     );
   }
 
   searchOrgsSubordinadas(event: any): void {
-    this.facade.findOrganizacoesSubordinadas(this.pessoaLogada.organizacao?.cdOrg)
+    const orgPessoaLogada = this.userService.user.organizacao;
+    this.facade.findOrganizacoesSubordinadas(orgPessoaLogada.cdOrg)
       .subscribe(response => {
-        const orgLogada = this.pessoaLogada.organizacao;
-
         const itens = response.map(org => {
           const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
           return item;
-        }).filter(org => org.value.id !== orgLogada?.id);
+        });
         this.orgsSubordinadas = [
-          { label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada },
+          { label: orgPessoaLogada?.sigla, title: orgPessoaLogada?.nome, value: orgPessoaLogada },
           ...itens
         ];
 
-        //this.orgsSubordinadas.unshift({ label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada })
       });
   }
 
   buildForm(): void {
     this.indicadorForm = this.fb.group({
+      id: this.fb.control(null),
       org: this.fb.control(null, [Validators.required]),
-      curso: this.fb.control(null, [Validators.required]),
+      capacitacao: this.fb.control(null, [Validators.required]),
       minimo: this.fb.control(0, [Validators.required]),
       ideal: this.fb.control(0, [Validators.required]),
       observacoes: this.fb.control(''),
     });
   }
 
-  get curso() {
-    return this.indicadorForm.get('curso');
+  get capacitacao() {
+    return this.indicadorForm.get('capacitacao');
   }
 
   get orgSubordinada() {
     return this.indicadorForm.get('org');
+  }
+
+  get indicadorId() {
+    return this.indicadorForm.get('id').value;
   }
 
   toogleDialog(): void {
