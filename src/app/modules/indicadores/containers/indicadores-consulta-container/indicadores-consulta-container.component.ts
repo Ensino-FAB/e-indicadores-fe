@@ -2,7 +2,6 @@ import { IndicadoresFacade } from './../indicadores-facade';
 import { Indicador, IndicadorAgrupado } from './../../../../models/indicador.model';
 import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
-import { PessoaLogada } from './../../../../models/pessoa.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -23,7 +22,7 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
 
   public consultaForm: FormGroup;
 
-  public pessoaLogada: PessoaLogada;
+  public pessoaLogada: any;
 
   constructor(
     private facade: IndicadoresFacade,
@@ -146,9 +145,10 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
           const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
           return item;
         }).filter(org => org.value.id !== orgLogada?.id);
-        this.orgsSubordinadas = itens;
-
-        this.orgsSubordinadas.unshift({ label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada })
+        this.orgsSubordinadas = [
+          { label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada },
+          ...itens
+        ];
       });
   }
 

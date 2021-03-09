@@ -1,17 +1,26 @@
-import { LoadingBarService } from './../../services/loading-bar.service';
-import { Component, HostListener, Input } from '@angular/core';
-import { Router, NavigationStart, NavigationEnd } from '@angular/router';
-import { filter, tap } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+import {
+  Component,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { KeycloakService } from 'keycloak-angular';
 import moment from 'moment';
+import { LoadingBarService } from './../../services/loading-bar.service';
+import { UserService } from 'src/app/service/user.service';
+
 
 @Component({
   selector: 'shrd-base-wrapper',
   templateUrl: './base-wrapper.component.html',
   styleUrls: ['./base-wrapper.component.scss'],
 })
-export class BaseWrapperComponent {
+export class BaseWrapperComponent implements OnInit, OnDestroy {
   private _sessionInterval: any;
 
   @Input() title: string;
@@ -19,10 +28,12 @@ export class BaseWrapperComponent {
 
   tokenDuration: moment.Duration;
 
-  subs$: Subscription[] = [];
+  private subs$: Subscription[] = [];
 
   constructor(
     private router: Router,
+    public keycloak: KeycloakService,
+    public userService: UserService,
     public loading: LoadingBarService
   ) {
     this.subs$.push(
@@ -30,18 +41,22 @@ export class BaseWrapperComponent {
         .pipe(
           filter(
             (e) => e instanceof NavigationStart || e instanceof NavigationEnd
-          ),
+          )
         )
         .subscribe((e) => {
-          if (e instanceof NavigationStart){
+          if (e instanceof NavigationStart) {
             this.loading.start();
-          }else{
+          } else {
             this.loading.end();
           }
         })
     );
 
     this.refreshTokenTime();
+  }
+
+  ngOnInit(): void {
+
   }
 
   ngOnDestroy(): void {
@@ -52,18 +67,12 @@ export class BaseWrapperComponent {
   handleLogout(): void {
     clearInterval(this._sessionInterval);
 
-    //this.keycloak.logout();
+    this.keycloak.logout();
   }
 
   handleUserName(): string {
-    // return (
-    //   this.userService.user?.pessoa?.nome
-    //     .split(' ')
-    //     .map((name) => `${name[0].toUpperCase()}${name.slice(1).toLowerCase()}`)
-    //     .join(' ') || 'Usuário não identificado'
-    // );
     return (
-        'Instalar keycloak'
+      this.userService.user?.nome
         .split(' ')
         .map((name) => `${name[0].toUpperCase()}${name.slice(1).toLowerCase()}`)
         .join(' ') || 'Usuário não identificado'
@@ -78,48 +87,46 @@ export class BaseWrapperComponent {
    * It will reset the token in 1st run or if the user interact with the screen
    * with 5 minutes left to expire
    */
-
   refreshTokenTime(): void {
+    if (
+      !this.tokenDuration ||
+      Math.round(this.tokenDuration.asMinutes()) <= 5
+    ) {
+      this.keycloak.updateToken(-1).then((refreshed) => {
+        if (refreshed) {
+          const kc = this.keycloak.getKeycloakInstance();
+
+          moment.locale('pt-br');
+          const currentTime = moment().unix();
+
+          const diffTime = kc.tokenParsed.exp + kc.timeSkew - currentTime;
+          const interval = 1000;
+
+          this.tokenDuration = moment.duration(diffTime, 's');
+
+          if (diffTime > 0) {
+            if (this._sessionInterval) {
+              clearInterval(this._sessionInterval);
+            }
+
+            this._sessionInterval = setInterval(() => {
+              if (this.keycloak.isTokenExpired()) {
+                this.handleLogout();
+              }
+
+              this.tokenDuration = moment.duration(
+                this.tokenDuration.asMilliseconds() - interval,
+                'ms'
+              );
+            }, interval);
+          }
+        }
+      });
+    }
   }
-    
 
-   
-  // @HostListener('document:click')
-  // refreshTokenTime(): void {
-  //   if (
-  //     !this.tokenDuration ||
-  //     Math.round(this.tokenDuration.asMinutes()) <= 5
-  //   ) {
-  //     this.keycloak.updateToken(-1).then((refreshed) => {
-  //       if (refreshed) {
-  //         const kc = this.keycloak.getKeycloakInstance();
-
-  //         moment.locale('pt-br');
-  //         const currentTime = moment().unix();
-
-  //         const diffTime = kc.tokenParsed.exp + kc.timeSkew - currentTime;
-  //         const interval = 1000;
-
-  //         this.tokenDuration = moment.duration(diffTime, 's');
-
-  //         if (diffTime > 0) {
-  //           if (this._sessionInterval) {
-  //             clearInterval(this._sessionInterval);
-  //           }
-
-  //           this._sessionInterval = setInterval(() => {
-  //             if (this.keycloak.isTokenExpired()) {
-  //               this.handleLogout();
-  //             }
-
-  //             this.tokenDuration = moment.duration(
-  //               this.tokenDuration.asMilliseconds() - interval,
-  //               'ms'
-  //             );
-  //           }, interval);
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
+  @HostListener('document:click')
+  handleOutsideClick(el: HTMLElement) {
+    this.refreshTokenTime();
+  }
 }

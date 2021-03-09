@@ -1,4 +1,4 @@
-import { PessoaLogada } from './../../../../models/pessoa.model';
+
 import { Indicador } from './../../../../models/indicador.model';
 import { Component, OnInit } from '@angular/core';
 import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
@@ -22,7 +22,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   public showDialogCreate = false;
   public indicadorForm: FormGroup;
 
-  public pessoaLogada: PessoaLogada = {
+  public pessoaLogada: any = {
     id: 15,
     nome: 'Fulano',
     nrCpf: '12345678910',
@@ -53,7 +53,6 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
   }
 
   edit(indicador: Indicador): void {
-    console.log(indicador)
     this.indicador = { ...indicador };
     this.showDialogCreate = true;
   }
@@ -156,9 +155,12 @@ export class IndicadoresCadastroContainerComponent implements OnInit {
           const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
           return item;
         }).filter(org => org.value.id !== orgLogada?.id);
-        this.orgsSubordinadas = itens;
+        this.orgsSubordinadas = [
+          { label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada },
+          ...itens
+        ];
 
-        this.orgsSubordinadas.unshift({ label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada })
+        //this.orgsSubordinadas.unshift({ label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada })
       });
   }
 

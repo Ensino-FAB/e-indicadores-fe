@@ -10,10 +10,11 @@ import {
 
 import { catchError, share } from 'rxjs/operators';
 import { MessageService } from 'primeng/api';
+import { LoadingBarService } from '../services/loading-bar.service';
 
 @Injectable({ providedIn: 'root' })
 export class RequestInterceptor implements HttpInterceptor {
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService, private loading: LoadingBarService) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -45,6 +46,7 @@ export class RequestInterceptor implements HttpInterceptor {
             break;
         }
 
+        this.loading.end();
         return throwError(err.error);
       }),
       share()

@@ -8,7 +8,3 @@ export interface Pessoa extends BaseModel {
   siglaPosto?: string;
   organizacao?: Organizacao;
 }
-
-export interface PessoaLogada extends Pessoa{
-  roles: string[];
-}

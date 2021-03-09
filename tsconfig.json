@@ -21,6 +21,7 @@
       "dom"
     ],
     "strictPropertyInitialization": false,
+    "strictNullChecks": false,
     "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
@@ -29,6 +30,7 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
     "strictPropertyInitialization": false,
+    "strictNullChecks": false,
     "allowSyntheticDefaultImports": true
   },
 }
