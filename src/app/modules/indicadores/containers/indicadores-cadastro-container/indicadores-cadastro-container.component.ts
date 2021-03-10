@@ -5,8 +5,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
 import { IndicadoresFacade } from '../indicadores-facade';
 import { Observable, Subscription } from 'rxjs';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { concatMap } from 'rxjs/operators';
 
 
 @Component({
@@ -23,15 +23,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
   public orgsSubordinadas: SelectItem[];
   public showDialogCreate = false;
   public indicadorForm: FormGroup;
-  private subscriptions: Subscription;
-
-  public pessoaLogada: any = {
-    id: 15,
-    nome: 'Fulano',
-    nrCpf: '12345678910',
-    organizacao: { id: 5, nome: 'Organização Logada', sigla: 'ORG5' },
-    roles: []
-  };
+  //private subscriptions: Subscription;
 
   constructor(
     private messageService: MessageService,
@@ -43,15 +35,18 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
 
   ngOnInit(): void {
     this.buildForm();
-    this.buscarIndicadores().subscribe(response => this.indicadores = response);
+    this.buscarIndicadores().subscribe(response => {
+      this.indicadores = response;
+    }
+    );
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+    //this.subscriptions.unsubscribe();
   }
 
   buscarIndicadores(): Observable<Indicador[]> {
-    return this.facade.findAllIndicadores(this.pessoaLogada.organizacao?.cdOrg);
+    return this.facade.findAllIndicadores(this.userService.user.organizacao?.cdOrg);
   }
 
   openDialogCreateIndicador(): void {
@@ -59,63 +54,69 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
   }
 
   edit(indicador: Indicador): void {
-    this.indicador = { ...indicador };
-    this.showDialogCreate = true;
+    const { id, organizacao, capacitacao, minimo, ideal, txObsevacoes } = indicador;
+
+    this.indicadorForm.patchValue({
+      id,
+      org: { value: organizacao },
+      capacitacao: { value: capacitacao },
+      minimo,
+      ideal,
+      txObsevacoes
+    });
+
+    this.toogleDialog();
   }
 
   deleteIndicador(indicador: Indicador): void {
+    const getindicadores$ = this.buscarIndicadores();
+
     this.confirmationService.confirm({
       message: 'Deseja apagar o indicador?',
       accept: () => {
         this.facade.deleteIndicador(indicador.id)
-          .subscribe(
-            () => {
+          .pipe(
+            concatMap(() => getindicadores$)
+          ).subscribe(
+            response => {
+              this.indicadores = [...response];
               this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso' });
-              this.buscarIndicadores();
             },
             e => this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao apagar indicador', life: 3000 }));
       }
     });
   }
 
-  resetForms(): void {
-    this.indicadorForm.reset({
-      id: null,
-      org: null,
-      capacitacao: null,
-      minimo: 0,
-      ideal: 0,
-      observacoes: '',
-    });
-  }
-
-  hideDialog(): void {
-    this.resetForms();
-    this.toogleDialog();
-  }
-
   saveIndicador(): void {
-    const { org, capacitacao, ideal, minimo, txObservacoes } = this.indicadorForm.value;
+    const { org, capacitacao, ideal, minimo, txObsevacoes } = this.indicadorForm.value;
 
     const data: IndicadorCreate = {
-      idCapacitacao: capacitacao.value.id,
-      idOrganizacao: org.value.id,
+      idcapacitacao: capacitacao.value.id,
+      idorganizacao: org.value.id,
       ideal,
       minimo,
-      txObservacoes
-    }
+      txObsevacoes
+    };
+
+    const getindicadores$ = this.buscarIndicadores();
 
     if (!this.indicadorId) {
+      const createIndicador$ = this.facade.createIndicador(data);
 
-
-      this.facade.createIndicador(data).subscribe(response => {
+      createIndicador$.pipe(
+        concatMap(() => getindicadores$)
+      ).subscribe(response => {
+        this.indicadores = [...response];
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador salvo com sucesso', life: 3000 });
-        console.log('dado salvo', response);
       });
     } else {
-      this.facade.editIndicador(data).subscribe(response => {
+      const editIndicador$ = this.facade.editIndicador(this.indicadorId, data);
+
+      editIndicador$.pipe(
+        concatMap(() => getindicadores$)
+      ).subscribe(response => {
+        this.indicadores = [...response];
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador editado com sucesso', life: 3000 });
-        console.log('dado editado', response);
       });
     }
 
@@ -123,8 +124,8 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
   }
 
   searchCapacitacao(event: any): void {
-    this.facade.findAllCapacitacao().subscribe(response => {
-      this.capacitacoes = response.map(capacitacao => ({
+    this.facade.findAllCapacitacao({ nome: event.query }).subscribe(response => {
+      this.capacitacoes = response.content.map(capacitacao => ({
         label: capacitacao.codigo,
         title: capacitacao.nome,
         value: capacitacao
@@ -156,8 +157,24 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
       capacitacao: this.fb.control(null, [Validators.required]),
       minimo: this.fb.control(0, [Validators.required]),
       ideal: this.fb.control(0, [Validators.required]),
-      observacoes: this.fb.control(''),
+      txObsevacoes: this.fb.control(''),
     });
+  }
+
+  resetForms(): void {
+    this.indicadorForm.reset({
+      id: null,
+      org: null,
+      capacitacao: null,
+      minimo: 0,
+      ideal: 0,
+      txObsevacoes: '',
+    });
+  }
+
+  hideDialog(): void {
+    this.resetForms();
+    this.toogleDialog();
   }
 
   get capacitacao() {

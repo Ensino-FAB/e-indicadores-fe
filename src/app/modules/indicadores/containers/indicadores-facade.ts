@@ -1,12 +1,14 @@
+import { CapacitacaoService } from './../../../service/capacitacao.service';
 import { OrganizacaoService } from './../../../service/organizacao.service';
 import { IndicadoresService } from './../../../service/indicadores.service';
 import { Diplomado } from '../../../models/diplomado.model';
-import { Capacitacao } from '../../../models/capacitacao.model';
+import { Capacitacao, CapacitacaoSearchModel } from '../../../models/capacitacao.model';
 import { Organizacao } from './../../../models/organizacao.model';
 import { Indicador, IndicadorCreate } from './../../../models/indicador.model';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { retry, take } from 'rxjs/operators';
+import { Pageable } from 'src/app/models/pageable.model';
 
 @Injectable()
 export class IndicadoresFacade {
@@ -14,7 +16,8 @@ export class IndicadoresFacade {
 
   constructor(
     private indicadoresService: IndicadoresService,
-    private organizacaoService: OrganizacaoService
+    private organizacaoService: OrganizacaoService,
+    private capacitacaoService: CapacitacaoService
   ) {
     for (let i = 0; i < 9; i++) {
       this.lista.push(this.gerarIndicador('32310'));
@@ -22,12 +25,11 @@ export class IndicadoresFacade {
   }
 
   createIndicador(indicador: IndicadorCreate): Observable<Indicador> {
-    //return this.http.post(`${this.endpoint}/cadastro/evento/${idEvento}`, record).pipe(take(1)) as Observable<Indicacao>;
-    return of(this.lista[0]);
+    return this.indicadoresService.create(indicador);
   }
 
-  editIndicador(indicador: IndicadorCreate): Observable<Indicador> {
-    return of(this.lista[0]);
+  editIndicador(idIndicador: string, indicadorCreate: IndicadorCreate): Observable<Indicador> {
+    return this.indicadoresService.edit(idIndicador, indicadorCreate);
   }
 
   findIndicadores(idOrganizacao: number): Observable<Indicador[]> {
@@ -40,8 +42,8 @@ export class IndicadoresFacade {
     return of(indicadores);
   }
 
-  findAllIndicadores(idOrg: string | undefined): Observable<Indicador[]> {
-    return of(this.lista);
+  findAllIndicadores(idOrg: string): Observable<Indicador[]> {
+    return this.indicadoresService.findAllIndicadores(idOrg);
   }
 
   findIndicadoresOrganizacoesESubordinadas(idOrgSuperior: number): Observable<Indicador[]> {
@@ -102,27 +104,16 @@ export class IndicadoresFacade {
     return of(indicadores);
   }
 
-  deleteIndicador(idIndicador: number | undefined): Observable<any> {
-    return of([]);
+  deleteIndicador(idIndicador: number): Observable<any> {
+    return this.indicadoresService.delete(idIndicador);
   }
 
   findOrganizacoesSubordinadas(idOrg: string): Observable<Organizacao[]> {
     return this.organizacaoService.findOrganizacoesSubordinadas(idOrg).pipe(take(1));
   }
 
-  findAllCapacitacao(): Observable<Capacitacao[]> {
-    return of([
-      { id: 1, nome: 'Curso 1', codigo: 'C1' },
-      { id: 2, nome: 'Curso 2', codigo: 'C2' },
-      { id: 3, nome: 'Curso 3', codigo: 'C3' },
-      { id: 4, nome: 'Curso 4', codigo: 'C4' },
-      { id: 5, nome: 'Curso 5', codigo: 'C5' },
-      { id: 6, nome: 'Curso 6', codigo: 'C6' },
-      { id: 7, nome: 'Curso 7', codigo: 'C7' },
-      { id: 8, nome: 'Curso 8', codigo: 'C8' },
-      { id: 9, nome: 'Curso 9', codigo: 'C9' },
-      { id: 10, nome: 'Curso 10', codigo: 'C10' }
-    ]);
+  findAllCapacitacao(search: CapacitacaoSearchModel): Observable<Pageable<Capacitacao>> {
+    return this.capacitacaoService.findAllCapacitacao(search);
   }
 
   findAllDiplomados(data: any): Observable<Diplomado[]> {
@@ -169,7 +160,7 @@ export class IndicadoresFacade {
       existente: this.getRandomInt(0, 8),
       gapMinimo: this.getRandomInt(1, 5),
       gapIdeal: this.getRandomInt(1, 6),
-      txObservacoes: 'Observações...'
+      txObsevacoes: 'Observações...'
     };
 
     return indicador;

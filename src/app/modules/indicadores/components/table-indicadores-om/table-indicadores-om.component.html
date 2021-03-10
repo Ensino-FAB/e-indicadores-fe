@@ -1,10 +1,10 @@
 <div class="card p-m-3">
+    <h3 style="text-align: center;">nome da OM</h3>
     <p-table #dt [value]="indicadores" styleClass="p-datatable-striped p-datatable-sm" >
         <ng-template pTemplate="header">
             <tr>
                 <th class="p-text-center" style="width: 7%">Código</th>
                 <th class="p-text-center" style="width: 30%">Nome</th>
-                <th class="p-text-center">Organização</th>
                 <th class="p-text-center">Mínimo</th>
                 <th class="p-text-center">Ideal</th>
                 <th class="p-text-center">Existente</th>
@@ -16,10 +16,10 @@
             <tr>
                 <td class="p-text-center">{{indicador.capacitacao.codigo}}</td>
                 <td class="p-text-center">{{indicador.capacitacao.nome}}</td>
-                <td class="p-text-center">{{indicador.organizacao.sigla}}</td>
                 <td class="p-text-center">{{indicador.minimo}}</td>
                 <td class="p-text-center">{{indicador.ideal}}</td> 
                 <td class="p-text-center">
+                    lupa -
                     <a *ngIf="indicador.existente" (click)="buscaDiplomados(indicador)" style="cursor: pointer;">
                         <p-badge [value]="indicador.existente" severity="success"></p-badge>
                     </a>

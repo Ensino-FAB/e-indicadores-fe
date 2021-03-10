@@ -59,8 +59,8 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
       );
 
 
-    this.facade.findAllCapacitacao().subscribe(response =>
-      this.cursos = response.map(curso => ({
+    this.facade.findAllCapacitacao({}).subscribe(response =>
+      this.cursos = response.content.map(curso => ({
         label: curso.codigo,
         title: curso.nome,
         value: curso
@@ -126,8 +126,8 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
   }
 
   searchCursos(event: any): void {
-    this.facade.findAllCapacitacao().subscribe(response => {
-      this.cursos = response.map(curso => ({
+    this.facade.findAllCapacitacao({nome: event.query}).subscribe(response => {
+      this.cursos = response.content.map(curso => ({
         label: curso.codigo,
         title: curso.nome,
         value: curso

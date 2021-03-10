@@ -1,18 +1,19 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Indicador, IndicadorCreate } from '../models/indicador.model';
+import { CapacitacaoSearchModel, Capacitacao } from '../models/capacitacao.model';
+import { Pageable } from '../models/pageable.model'
 
 @Injectable({
   providedIn: 'root'
 })
-export class IndicadoresService {
-  
+export class CapacitacaoService {
+
   constructor(protected http: HttpClient) { }
 
-  private endpoint = `${environment.INDICADORES_API_URL}/indicador`;
+  private endpoint = `${environment.INDICADORES_API_URL}/capacitacao`;
 
   removeEmptyFields(data: any): void {
     if (!data) {
@@ -44,18 +45,10 @@ export class IndicadoresService {
     return params;
   }
 
-  edit(idIndicador: string, indicadorCreate: IndicadorCreate): Observable<Indicador> {
-    return this.http.put<Indicador>(`${this.endpoint}/${idIndicador}`, indicadorCreate);
-  }
-  create(indicadorCreate: IndicadorCreate): Observable<Indicador> {
-    return this.http.post<Indicador>(this.endpoint, indicadorCreate);
-  }
+  findAllCapacitacao(search: CapacitacaoSearchModel): Observable<Pageable<Capacitacao>> {
+    this.removeEmptyFields(search);
+    const params = this.buildHttpParams(search);
 
-  delete(idIndicador: number): Observable<any> {
-    return this.http.delete<any>(`${this.endpoint}/${idIndicador}`,);
-  }
-
-  findAllIndicadores(idOrg: string): Observable<Indicador[]> {
-    return this.http.get<Indicador[]>(this.endpoint).pipe(take(1));
+    return this.http.get<any>(this.endpoint, { params }).pipe(take(1));
   }
 }
