@@ -30,7 +30,6 @@ const authProvider = authProviderBuilder({
   ],
   providers: [
     authProvider,
-    MessageService,
     { provide: 'INDICADORES_API_ENDPOINT', useValue: environment.INDICADORES_API_URL },
   ],
   bootstrap: [AppComponent]

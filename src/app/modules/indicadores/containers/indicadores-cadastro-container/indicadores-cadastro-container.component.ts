@@ -2,19 +2,19 @@ import { UserService } from 'src/app/service/user.service';
 
 import { Indicador, IndicadorCreate } from './../../../../models/indicador.model';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MessageService, ConfirmationService, SelectItem } from 'primeng/api';
 import { IndicadoresFacade } from '../indicadores-facade';
 import { Observable, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { concatMap } from 'rxjs/operators';
 import { LoadingBarService } from 'src/app/shared/services/loading-bar.service';
+import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
 
 
 @Component({
   selector: 'app-indicadores-cadastro-container',
   templateUrl: './indicadores-cadastro-container.component.html',
   styleUrls: ['./indicadores-cadastro-container.component.scss'],
-  providers: [MessageService, ConfirmationService]
+  providers: [ConfirmationService]
 })
 export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy {
   public indicadores: Indicador[];
@@ -91,7 +91,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
             ).subscribe(
               response => {
                 this.indicadores = [...response];
-                this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso' });
+                this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso'});
               },
               () => this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao apagar indicador', life: 3000 }))
         );

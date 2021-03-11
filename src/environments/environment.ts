@@ -4,14 +4,13 @@
 
 export const environment = {
   production: false,
+  INDICADORES_API_URL: 'http://localhost:8080/esistens-indicadores-api',
   KEYCLOAK_URL: 'http://localhost:8084/auth',
   KEYCLOAK_REALM: 'FAB',
   KEYCLOAK_CLIENT_ID: 'ensino-client',
   KEYCLOAK_REDIRECT_URI:
     'http://localhost:4200/esistens-indicadores/assets/silent-check-sso.html',
-
   INDICADORES_FRONT_URL: 'http://localhost:4200/esistens-indicadores',
-  INDICADORES_API_URL: 'http://localhost:8080/esistens-indicadores-api'
 };
 
 /*
