@@ -5,6 +5,7 @@
         <div [formGroup]='consultaForm' class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 10px 10px 0 10px;">
             <div class="p-field p-col">
                 <p-autoComplete field="label" formControlName="curso" [suggestions]="cursos"
+                    emptyMessage="Curso não encontrado"
                     (completeMethod)="searchCursos($event)" [dropdown]="true" [minLength]="3">
                     <ng-template let-curso pTemplate="item">
                         <div class="dropdown-item-container">
@@ -17,6 +18,7 @@
             </div>
             <div class="p-field p-col">
                 <p-autoComplete field="label" formControlName="org" [suggestions]="orgsSubordinadas"
+                    emptyMessage="Organização não encontrada"
                     (completeMethod)="searchOrgsSubordinadas($event)" [dropdown]="true" [minLength]="3">
                     <ng-template let-curso pTemplate="item">
                         <div class="dropdown-item-container">

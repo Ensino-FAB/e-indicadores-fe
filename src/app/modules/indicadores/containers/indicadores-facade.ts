@@ -7,21 +7,18 @@ import { Organizacao } from './../../../models/organizacao.model';
 import { Indicador, IndicadorCreate } from './../../../models/indicador.model';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { retry, take } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { Pageable } from 'src/app/models/pageable.model';
 
 @Injectable()
 export class IndicadoresFacade {
-  private lista: Indicador[] = [];
+
 
   constructor(
     private indicadoresService: IndicadoresService,
     private organizacaoService: OrganizacaoService,
     private capacitacaoService: CapacitacaoService
   ) {
-    for (let i = 0; i < 9; i++) {
-      this.lista.push(this.gerarIndicador('32310'));
-    }
   }
 
   createIndicador(indicador: IndicadorCreate): Observable<Indicador> {
@@ -33,75 +30,35 @@ export class IndicadoresFacade {
   }
 
   findIndicadores(idOrganizacao: number): Observable<Indicador[]> {
-    const indicadores: Indicador[] = [];
-
-    for (let i = 0; i < 20; i++) {
-      indicadores.push(this.gerarIndicador('32310'));
-    }
-
-    return of(indicadores);
+    return this.indicadoresService.findAllIndicadoresOrganizacao(`${idOrganizacao}`);
   }
 
-  findAllIndicadores(idOrg: string): Observable<Indicador[]> {
-    return this.indicadoresService.findAllIndicadores(idOrg);
+  findAllIndicadoresOrgESubordinadas(org: Organizacao): Observable<Indicador[]> {
+    const getIndicadoresSubordinadas$ = this.indicadoresService.findAllIndicadoresOrganizacoesSubordinadas(org.cdOrg);
+
+    return this.findIndicadores(org.id).pipe(switchMap(indicadores => {
+      return getIndicadoresSubordinadas$.pipe(
+        map(indSubordinadas => [...indicadores, ...indSubordinadas])
+      );
+    }));
   }
 
-  findIndicadoresOrganizacoesESubordinadas(idOrgSuperior: number): Observable<Indicador[]> {
-    const indicadores: Indicador[] = [];
-
-    for (let i = 0; i < 20; i++) {
-      indicadores.push(this.gerarIndicador('32310'));
-    }
-
-    for (let i = 0; i < 10; i++) {
-      indicadores.push(this.gerarIndicador('32311'));
-    }
-
-    for (let i = 0; i < 2; i++) {
-      indicadores.push(this.gerarIndicador('32312'));
-    }
-
-    for (let i = 0; i < 7; i++) {
-      indicadores.push(this.gerarIndicador('32313'));
-    }
-
-    this.shuffle(indicadores);
-
-    return of(indicadores);
+  findIndicadoresPorCursoOrganizacao(idOrg: number, idCurso: number): Observable<Indicador[]> {
+    return this.indicadoresService.findAllIndicadoresByCursoOrganizacao(`${idOrg}`, `${idCurso}`);
   }
 
-  findIndicadoresPorCursoOrganizacao(idOrg: number, idCurso: number | undefined): Observable<Indicador[]> {
-    const indicadores: Indicador[] = [];
+  findIndicadoresPorCursoOrganizacaoSubordinadas(org: Organizacao, idCurso: number): Observable<Indicador[]> {
+    const getIndSubord$ = this.indicadoresService.findAllIndicadoresByCursoOrgSubordinada(`${org.cdOrg}`, `${idCurso}`);
 
-    for (let i = 0; i < 20; i++) {
-      indicadores.push(this.gerarIndicador('32310'));
-    }
-
-    return of(indicadores);
-  }
-
-  findIndicadoresPorCursoOrganizacaoSubordinadas(idOrg: number, idCurso: number | undefined): Observable<Indicador[]> {
-    const indicadores: Indicador[] = [];
-
-    for (let i = 0; i < 20; i++) {
-      indicadores.push(this.gerarIndicador('32310'));
-    }
-
-    for (let i = 0; i < 10; i++) {
-      indicadores.push(this.gerarIndicador('32311'));
-    }
-
-    for (let i = 0; i < 2; i++) {
-      indicadores.push(this.gerarIndicador('32312'));
-    }
-
-    for (let i = 0; i < 7; i++) {
-      indicadores.push(this.gerarIndicador('32313'));
-    }
-
-    this.shuffle(indicadores);
-
-    return of(indicadores);
+    return this.indicadoresService.findAllIndicadoresByCursoOrganizacao(`${org.id}`, `${idCurso}`)
+      .pipe(
+        switchMap(indicadores => {
+          return getIndSubord$.pipe(
+            map(indSubordinadas => [...indicadores, ...indSubordinadas])
+          )
+        }),
+        tap(console.log)
+      );
   }
 
   deleteIndicador(idIndicador: number): Observable<any> {

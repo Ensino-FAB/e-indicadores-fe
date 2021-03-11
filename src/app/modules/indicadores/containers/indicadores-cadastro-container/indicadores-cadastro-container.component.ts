@@ -7,6 +7,7 @@ import { IndicadoresFacade } from '../indicadores-facade';
 import { Observable, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { concatMap } from 'rxjs/operators';
+import { LoadingBarService } from 'src/app/shared/services/loading-bar.service';
 
 
 @Component({
@@ -23,30 +24,39 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
   public orgsSubordinadas: SelectItem[];
   public showDialogCreate = false;
   public indicadorForm: FormGroup;
-  //private subscriptions: Subscription;
+  private subs$: Subscription[] = [];
 
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private facade: IndicadoresFacade,
     private fb: FormBuilder,
+    private loading: LoadingBarService,
     private userService: UserService,
   ) { }
 
   ngOnInit(): void {
+
     this.buildForm();
-    this.buscarIndicadores().subscribe(response => {
-      this.indicadores = response;
-    }
+    this.loading.start();
+    this.subs$.push(
+      this.buscarIndicadores()
+        .subscribe(response => {
+          this.indicadores = [...response];
+          this.loading.end();
+        }
+        )
     );
   }
 
   ngOnDestroy(): void {
-    //this.subscriptions.unsubscribe();
+    this.subs$.forEach((sub) => {
+      sub.unsubscribe();
+    });
   }
 
   buscarIndicadores(): Observable<Indicador[]> {
-    return this.facade.findAllIndicadores(this.userService.user.organizacao?.cdOrg);
+    return this.facade.findAllIndicadoresOrgESubordinadas(this.userService.user.organizacao);
   }
 
   openDialogCreateIndicador(): void {
@@ -74,15 +84,17 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
     this.confirmationService.confirm({
       message: 'Deseja apagar o indicador?',
       accept: () => {
-        this.facade.deleteIndicador(indicador.id)
-          .pipe(
-            concatMap(() => getindicadores$)
-          ).subscribe(
-            response => {
-              this.indicadores = [...response];
-              this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso' });
-            },
-            e => this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao apagar indicador', life: 3000 }));
+        this.subs$.push(
+          this.facade.deleteIndicador(indicador.id)
+            .pipe(
+              concatMap(() => getindicadores$)
+            ).subscribe(
+              response => {
+                this.indicadores = [...response];
+                this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso' });
+              },
+              () => this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao apagar indicador', life: 3000 }))
+        );
       }
     });
   }
@@ -102,22 +114,24 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
 
     if (!this.indicadorId) {
       const createIndicador$ = this.facade.createIndicador(data);
-
-      createIndicador$.pipe(
-        concatMap(() => getindicadores$)
-      ).subscribe(response => {
-        this.indicadores = [...response];
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador salvo com sucesso', life: 3000 });
-      });
+      this.subs$.push(
+        createIndicador$.pipe(
+          concatMap(() => getindicadores$)
+        ).subscribe(response => {
+          this.indicadores = [...response];
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador salvo com sucesso', life: 3000 });
+        })
+      );
     } else {
       const editIndicador$ = this.facade.editIndicador(this.indicadorId, data);
-
-      editIndicador$.pipe(
-        concatMap(() => getindicadores$)
-      ).subscribe(response => {
-        this.indicadores = [...response];
-        this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador editado com sucesso', life: 3000 });
-      });
+      this.subs$.push(
+        editIndicador$.pipe(
+          concatMap(() => getindicadores$)
+        ).subscribe(response => {
+          this.indicadores = [...response];
+          this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador editado com sucesso', life: 3000 });
+        })
+      );
     }
 
     this.hideDialog();

@@ -17,9 +17,13 @@
                 <td class="p-text-center">{{indicador.minimo}}</td>
                 <td class="p-text-center">{{indicador.ideal}}</td>
                 <td class="p-text-center">
-                    <a *ngIf="indicador.existente" (click)="buscaDiplomados(indicador)" style="cursor: pointer;">
-                        <p-badge [value]="indicador.existente" severity="success"></p-badge>
-                    </a>
+                    <div class="p-d-flex p-jc-center p-ai-center">
+                        <div *ngIf="indicador.existente" style="margin-right: 0.4rem;">{{indicador.existente}}</div>
+                        <a *ngIf="indicador.existente" (click)="buscaDiplomados(indicador)" style="cursor: pointer;">
+                            <button pButton pRipple type="button" icon="pi pi-search"
+                                class="p-button-rounded p-button-text"></button>
+                        </a>
+                    </div>
                     <span *ngIf="!indicador.existente">-</span>
                 </td>
                 <td class="p-text-center">{{indicador.gapMinimo}}</td>

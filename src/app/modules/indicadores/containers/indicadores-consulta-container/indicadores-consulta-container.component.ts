@@ -1,15 +1,19 @@
+import { Capacitacao } from './../../../../models/capacitacao.model';
+import { UserService } from 'src/app/service/user.service';
 import { IndicadoresFacade } from './../indicadores-facade';
 import { Indicador, IndicadorAgrupado } from './../../../../models/indicador.model';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { Organizacao } from 'src/app/models/organizacao.model';
 
 @Component({
   selector: 'app-indicadores-consulta-container',
   templateUrl: './indicadores-consulta-container.component.html',
   styleUrls: ['./indicadores-consulta-container.component.scss']
 })
-export class IndicadoresConsultaContainerComponent implements OnInit {
+export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy {
 
   public orgsSubordinadas: SelectItem[];
   public cursos: SelectItem[];
@@ -19,14 +23,14 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
   public idCursos: number;
   public showTableOmIndicadores: boolean;
   public subordinadas = false;
+  private subs$: Subscription[] = [];
 
   public consultaForm: FormGroup;
 
-  public pessoaLogada: any;
-
   constructor(
-    private facade: IndicadoresFacade,
-    private fb: FormBuilder
+    private indicadoresFacade: IndicadoresFacade,
+    private fb: FormBuilder,
+    private userService: UserService
   ) {
 
   }
@@ -34,38 +38,22 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
   ngOnInit(): void {
     this.buildForm();
 
-    this.pessoaLogada = {
-      id: 15,
-      nome: 'Fulano',
-      nrCpf: '12345678910',
-      organizacao: { id: 5, nome: 'Organização Logada', sigla: 'ORG5' },
-      roles: []
-    };
-    this.org?.setValue(
-      {
-        label: this.pessoaLogada.organizacao?.sigla,
-        title: this.pessoaLogada.organizacao?.nome,
-        value: this.pessoaLogada.organizacao
-      }
+    this.subs$.push(
+      this.indicadoresFacade.findOrganizacoesSubordinadas(this.userService.user.organizacao.cdOrg)
+        .subscribe(
+          response =>
+            this.orgsSubordinadas = response.map(org => {
+              const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
+              return item;
+            })
+        )
     );
+  }
 
-    this.facade.findOrganizacoesSubordinadas(this.cdOrgLogado)
-      .subscribe(
-        response =>
-          this.orgsSubordinadas = response.map(org => {
-            const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
-            return item;
-          })
-      );
-
-
-    this.facade.findAllCapacitacao({}).subscribe(response =>
-      this.cursos = response.content.map(curso => ({
-        label: curso.codigo,
-        title: curso.nome,
-        value: curso
-      }))
-    );
+  ngOnDestroy(): void {
+    this.subs$.forEach((sub) => {
+      sub.unsubscribe();
+    });
   }
 
   buscarIndicadores(): void {
@@ -73,40 +61,48 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
     this.indicadores = [];
     this.showTableOmIndicadores = false;
 
-    const cursoSelecionado = this.curso?.value;
-    const organizacaoSelecionada = this.org?.value;
+    const selectedItemCurso: SelectItem = this.curso?.value;
+    const selectedItemOrg: SelectItem = this.org?.value;
 
     if (!this.subordinadas) {
-      if (!cursoSelecionado) {
-        this.facade.findIndicadores(organizacaoSelecionada.id)
-          .subscribe(response => {
-            this.showTableOmIndicadores = true;
-            this.indicadores = response;
-          });
+      if (!selectedItemCurso) {
+        this.subs$.push(
+          this.indicadoresFacade.findIndicadores(selectedItemOrg.value.id)
+            .subscribe(response => {
+              this.indicadores = response;
+              this.showTableOmIndicadores = true;
+            })
+        );
         return;
       }
 
-      if (cursoSelecionado) {
-        this.facade.findIndicadoresPorCursoOrganizacao(organizacaoSelecionada.id, cursoSelecionado.id)
-          .subscribe(response => {
-            this.fillIndicadoresAgrupados(response);
-          });
+      if (selectedItemCurso) {
+        this.subs$.push(
+          this.indicadoresFacade.findIndicadoresPorCursoOrganizacao(selectedItemOrg.value.id, selectedItemCurso.value.id)
+            .subscribe(response => {
+              this.fillIndicadoresAgrupados(response);
+            })
+        );
         return;
       }
     } else {
-      if (!cursoSelecionado) {
-        this.facade.findIndicadoresOrganizacoesESubordinadas(organizacaoSelecionada.id)
-          .subscribe(response => {
-            this.fillIndicadoresAgrupados(response);
-          });
+      if (!selectedItemCurso) {
+        this.subs$.push(
+          this.indicadoresFacade.findAllIndicadoresOrgESubordinadas(selectedItemOrg.value)
+            .subscribe(response => {
+              this.fillIndicadoresAgrupados(response);
+            })
+        );
         return;
       }
 
-      if (cursoSelecionado) {
-        this.facade.findIndicadoresPorCursoOrganizacaoSubordinadas(organizacaoSelecionada.id, cursoSelecionado.id)
-          .subscribe(response => {
-            this.fillIndicadoresAgrupados(response);
-          });
+      if (selectedItemCurso) {
+        this.subs$.push(
+          this.indicadoresFacade.findIndicadoresPorCursoOrganizacaoSubordinadas(selectedItemOrg.value, selectedItemCurso.value.id)
+            .subscribe(response => {
+              this.fillIndicadoresAgrupados(response);
+            })
+        );
         return;
       }
     }
@@ -126,30 +122,33 @@ export class IndicadoresConsultaContainerComponent implements OnInit {
   }
 
   searchCursos(event: any): void {
-    this.facade.findAllCapacitacao({nome: event.query}).subscribe(response => {
-      this.cursos = response.content.map(curso => ({
-        label: curso.codigo,
-        title: curso.nome,
-        value: curso
-      }));
-    }
+    this.subs$.push(
+      this.indicadoresFacade.findAllCapacitacao({ nome: event.query })
+        .subscribe(response => {
+          this.cursos = response.content.map(curso => ({
+            label: curso.codigo,
+            title: curso.nome,
+            value: curso
+          }));
+        })
     );
   }
 
   searchOrgsSubordinadas(event: any): void {
-    this.facade.findOrganizacoesSubordinadas(this.pessoaLogada.organizacao?.cdOrg)
-      .subscribe(response => {
-        const orgLogada = this.pessoaLogada.organizacao;
-
-        const itens = response.map(org => {
-          const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
-          return item;
-        }).filter(org => org.value.id !== orgLogada?.id);
-        this.orgsSubordinadas = [
-          { label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada },
-          ...itens
-        ];
-      });
+    const orgLogada = this.userService.user.organizacao;
+    this.subs$.push(
+      this.indicadoresFacade.findOrganizacoesSubordinadas(orgLogada.cdOrg)
+        .subscribe(response => {
+          const itens = response.map(org => {
+            const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
+            return item;
+          });
+          this.orgsSubordinadas = [
+            { label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada },
+            ...itens
+          ];
+        })
+    );
   }
 
   resetForms(): void {

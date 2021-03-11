@@ -1,3 +1,4 @@
+import { Organizacao } from './../models/organizacao.model';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -9,7 +10,7 @@ import { Indicador, IndicadorCreate } from '../models/indicador.model';
   providedIn: 'root'
 })
 export class IndicadoresService {
-  
+
   constructor(protected http: HttpClient) { }
 
   private endpoint = `${environment.INDICADORES_API_URL}/indicador`;
@@ -55,7 +56,19 @@ export class IndicadoresService {
     return this.http.delete<any>(`${this.endpoint}/${idIndicador}`,);
   }
 
-  findAllIndicadores(idOrg: string): Observable<Indicador[]> {
-    return this.http.get<Indicador[]>(this.endpoint).pipe(take(1));
+  findAllIndicadoresOrganizacao(idOrg: string): Observable<Indicador[]> {
+    return this.http.get<Indicador[]>(`${this.endpoint}/organizacao/${idOrg}`).pipe(take(1));
+  }
+
+  findAllIndicadoresOrganizacoesSubordinadas(cdOrg: string): Observable<Indicador[]> {
+    return this.http.get<Indicador[]>(`${this.endpoint}/organizacao/${cdOrg}/subordinadas`).pipe(take(1));
+  }
+
+  findAllIndicadoresByCursoOrganizacao(idOrg: string, idCurso: string): Observable<Indicador[]>{
+    return this.http.get<Indicador[]>(`${this.endpoint}/filtro/organizacao/${idOrg}/curso/${idCurso}`).pipe(take(1));
+  }
+
+  findAllIndicadoresByCursoOrgSubordinada(cdOrg: string, idCurso: string): Observable<Indicador[]>{
+    return this.http.get<Indicador[]>(`${this.endpoint}/filtro/organizacao/subordinadas/${cdOrg}/curso/${idCurso}`).pipe(take(1));
   }
 }
