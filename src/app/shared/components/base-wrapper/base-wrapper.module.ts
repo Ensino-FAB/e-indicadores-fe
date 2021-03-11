@@ -12,6 +12,8 @@ import { LoadingBarService } from './../../services/loading-bar.service';
 
 import { RequestInterceptor } from '../../interceptors/request-interceptor';
 import { LoggingInterceptor } from './../../interceptors/logging-interceptor';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [BaseWrapperComponent],
@@ -20,10 +22,12 @@ import { LoggingInterceptor } from './../../interceptors/logging-interceptor';
     AvatarModule,
     ButtonModule,
     LoadingBarModule,
-    RouterModule
+    RouterModule,
+    ToastModule,
   ],
   exports: [BaseWrapperComponent],
   providers: [
+    MessageService,
     LoadingBarService,
     {
       provide: HTTP_INTERCEPTORS,

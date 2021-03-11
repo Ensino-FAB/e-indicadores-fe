@@ -1,5 +1,4 @@
 <section>
-    <p-toast></p-toast>
     <div class="p-shadow-1" style="margin: 4rem;">
         <button pButton label="Novo" icon="pi pi-plus" class="p-button-success p-mb-3"
             (click)="openDialogCreateIndicador()"></button>
@@ -57,9 +56,9 @@
         <p-dialog header="{{indicadorId ? 'Editar ':'Criar '}} indicador" [(visible)]="showDialogCreate"
             [style]="{width: '45vw'}" [modal]="true" [closable]="false" class="p-fluid">
             <ng-template pTemplate="content">
-                
+
                 <form [formGroup]='indicadorForm'>
-                    
+
                     <div class="p-field p-formgrid p-grid" *ngIf="!indicadorId">
                         <div class="p-field p-col">
                             <p-autoComplete field="label" formControlName="capacitacao" [suggestions]="capacitacoes"
