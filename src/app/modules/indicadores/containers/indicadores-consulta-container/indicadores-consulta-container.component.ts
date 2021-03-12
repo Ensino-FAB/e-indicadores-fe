@@ -1,3 +1,4 @@
+import { LoadingBarService } from './../../../../shared/services/loading-bar.service';
 import { UserService } from 'src/app/service/user.service';
 import { IndicadoresFacade } from './../indicadores-facade';
 import { Indicador, IndicadorAgrupado } from './../../../../models/indicador.model';
@@ -29,6 +30,7 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
     private indicadoresFacade: IndicadoresFacade,
     private fb: FormBuilder,
     private messageService: MessageService,
+    private loadingService: LoadingBarService,
     private userService: UserService
   ) {
 
@@ -37,14 +39,17 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
   ngOnInit(): void {
     this.buildForm();
 
+    this.loadingService.start();
     this.subs$.push(
       this.indicadoresFacade.findOrganizacoesSubordinadas(this.userService.user.organizacao.cdOrg)
         .subscribe(
-          response =>
+          response => {
             this.orgsSubordinadas = response.map(org => {
               const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
               return item;
-            })
+            });
+            this.loadingService.end();
+          }
         )
     );
   }
@@ -76,50 +81,62 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
     }
 
     if (selectedItemCurso && !selectedItemOrg) {
-      this.indicadoresFacade.findAllIndicadoresByCapacitacao(selectedItemCurso.value.id)
-        .subscribe(response => {
-          this.fillIndicadoresAgrupados(response);
-        })
+      this.loadingService.start();
+      this.subs$.push(
+        this.indicadoresFacade.findAllIndicadoresByCapacitacao(selectedItemCurso.value.id)
+          .subscribe(response => {
+            this.fillIndicadoresAgrupados(response);
+            this.loadingService.end();
+          })
+      );
       return;
     }
 
     if (!this.incluirSubordinadas) {
       if (!selectedItemCurso) {
+        this.loadingService.start();
         this.subs$.push(
           this.indicadoresFacade.findAllIndicadoresByOrg(selectedItemOrg.value.id)
             .subscribe(response => {
               this.indicadores = response;
               this.showTableOmIndicadores = true;
+              this.loadingService.end();
             })
         );
         return;
       }
 
       if (selectedItemCurso) {
+        this.loadingService.start();
         this.subs$.push(
           this.indicadoresFacade.findIndicadoresPorCursoOrganizacao(selectedItemOrg.value.id, selectedItemCurso.value.id)
             .subscribe(response => {
               this.fillIndicadoresAgrupados(response);
+              this.loadingService.end();
             })
         );
         return;
       }
     } else {
       if (!selectedItemCurso) {
+        this.loadingService.start();
         this.subs$.push(
           this.indicadoresFacade.findAllIndicadoresOrgESubordinadas(selectedItemOrg.value)
             .subscribe(response => {
               this.fillIndicadoresAgrupados(response);
+              this.loadingService.end();
             })
         );
         return;
       }
 
       if (selectedItemCurso) {
+        this.loadingService.start();
         this.subs$.push(
           this.indicadoresFacade.findIndicadoresPorCursoOrganizacaoSubordinadas(selectedItemOrg.value, selectedItemCurso.value.id)
             .subscribe(response => {
               this.fillIndicadoresAgrupados(response);
+              this.loadingService.end();
             })
         );
         return;

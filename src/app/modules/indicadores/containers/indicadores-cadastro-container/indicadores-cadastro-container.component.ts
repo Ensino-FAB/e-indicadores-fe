@@ -84,6 +84,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
     this.confirmationService.confirm({
       message: 'Deseja apagar o indicador?',
       accept: () => {
+        this.loading.start();
         this.subs$.push(
           this.facade.deleteIndicador(indicador.id)
             .pipe(
@@ -91,7 +92,8 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
             ).subscribe(
               response => {
                 this.indicadores = [...response];
-                this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso'});
+                this.loading.end();
+                this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador apagado com sucesso' });
               },
               () => this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao apagar indicador', life: 3000 }))
         );
@@ -114,21 +116,25 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
 
     if (!this.indicadorId) {
       const createIndicador$ = this.facade.createIndicador(data);
+      this.loading.start();
       this.subs$.push(
         createIndicador$.pipe(
           concatMap(() => getindicadores$)
         ).subscribe(response => {
           this.indicadores = [...response];
+          this.loading.end();
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador salvo com sucesso', life: 3000 });
         })
       );
     } else {
       const editIndicador$ = this.facade.editIndicador(this.indicadorId, data);
+      this.loading.start();
       this.subs$.push(
         editIndicador$.pipe(
           concatMap(() => getindicadores$)
         ).subscribe(response => {
           this.indicadores = [...response];
+          this.loading.end();
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Indicador editado com sucesso', life: 3000 });
         })
       );
@@ -138,14 +144,15 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
   }
 
   searchCapacitacao(event: any): void {
-    this.facade.findAllCapacitacao({ nome: event.query }).subscribe(response => {
-      this.capacitacoes = response.content.map(capacitacao => ({
-        label: capacitacao.codigo,
-        title: capacitacao.nome,
-        value: capacitacao
-      }));
-    }
-    );
+    this.facade.findAllCapacitacao({ nome: event.query })
+      .subscribe(response => {
+        this.capacitacoes = response.content.map(capacitacao => ({
+          label: capacitacao.codigo,
+          title: capacitacao.nome,
+          value: capacitacao
+        }));
+      }
+      );
   }
 
   searchOrgsSubordinadas(event: any): void {
