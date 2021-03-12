@@ -12,23 +12,25 @@ import { DiplomadosListComponent } from '../diplomados-list/diplomados-list.comp
 export class TableIndicadoresOmComponent implements OnInit {
 
   @Input() indicadores: Indicador[];
+  public nomeOm: string;
 
 
   constructor(private dialogService: DialogService) {
   }
 
   ngOnInit(): void {
+    this.nomeOm = this.indicadores[0].organizacao.sigla;
   }
 
   buscaDiplomados(indicador: Indicador): void {
     const ref = this.dialogService.open(DiplomadosListComponent, {
       data: {
-        idOrg: indicador.organizacao.cdOrg,
+        idOrg: indicador.organizacao.id,
         capacitacaoId: indicador.capacitacao.id
       },
       header: `Diplomados do ${indicador.capacitacao.nome}`,
       width: '70vw',
-      height: '70vh'
+      height: 'auto'
     });
   }
 

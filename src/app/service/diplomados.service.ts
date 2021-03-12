@@ -1,18 +1,18 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { CapacitacaoSearchModel, Capacitacao } from '../models/capacitacao.model';
-import { Pageable } from '../models/pageable.model'
+import { Diplomado } from '../models/diplomado.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CapacitacaoService {
+export class DiplomadosService {
+
   constructor(protected http: HttpClient) { }
 
-  private endpoint = `${environment.INDICADORES_API_URL}/capacitacao`;
+  private endpoint = `${environment.INDICADORES_API_URL}/diplomados`;
 
   removeEmptyFields(data: any): void {
     if (!data) {
@@ -44,10 +44,10 @@ export class CapacitacaoService {
     return params;
   }
 
-  findAllCapacitacao(search: CapacitacaoSearchModel): Observable<Pageable<Capacitacao>> {
-    this.removeEmptyFields(search);
-    const params = this.buildHttpParams(search);
+  findAllDiplomados(idOrg: string, capacitacaoid: string): Observable<Diplomado[]> {
+    const params = this.buildHttpParams({ capacitacaoid });
 
-    return this.http.get<any>(this.endpoint, { params }).pipe(take(1));
+    return this.http.get<Diplomado[]>(`${this.endpoint}/curso/organizacao/${idOrg}`, { params })
+    .pipe(take(1));
   }
 }

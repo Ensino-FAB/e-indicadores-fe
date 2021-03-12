@@ -1,3 +1,4 @@
+import { DiplomadosService } from './../../../service/diplomados.service';
 import { CapacitacaoService } from './../../../service/capacitacao.service';
 import { OrganizacaoService } from './../../../service/organizacao.service';
 import { IndicadoresService } from './../../../service/indicadores.service';
@@ -17,7 +18,8 @@ export class IndicadoresFacade {
   constructor(
     private indicadoresService: IndicadoresService,
     private organizacaoService: OrganizacaoService,
-    private capacitacaoService: CapacitacaoService
+    private capacitacaoService: CapacitacaoService,
+    private diplomadosService: DiplomadosService
   ) {
   }
 
@@ -76,28 +78,8 @@ export class IndicadoresFacade {
     return this.capacitacaoService.findAllCapacitacao(search);
   }
 
-  findAllDiplomados(data: any): Observable<Diplomado[]> {
-    const dip: Diplomado = {
-      pessoa: {
-        id: this.getRandomInt(1, 1000),
-        nome: 'pessoa',
-        nrCpf: '012345678910',
-        nrOrdem: '1234567',
-        siglaPosto: '1T',
-        organizacao: { id: this.getRandomInt(1, 1000), nome: 'Diretoria de ...', sigla: 'DIRAP', cdOrg: '313435' }
-      },
-      capacitacao: { id: 10, nome: 'Curso 10', codigo: 'C10' },
-      dataInicio: new Date(),
-      dataTermino: new Date(),
-    };
-
-    const diplomados: Diplomado[] = [];
-
-    for (let i = 0; i < 30; i++) {
-      diplomados.push(dip);
-    }
-
-    return of(diplomados);
+  findAllDiplomados(idOrg: string, capacitacaoId: string): Observable<Diplomado[]> {
+    return this.diplomadosService.findAllDiplomados(idOrg, capacitacaoId);
   }
 
 

@@ -24,8 +24,10 @@ export class DiplomadosListComponent implements OnInit {
   }
 
   buscaDiplomados(): void {
-    this.facade.findAllDiplomados(this.config.data)
-      .subscribe(response => this.diplomados = response);
+    this.facade.findAllDiplomados(this.config.data.idOrg, this.config.data.capacitacaoId)
+      .subscribe(response => {
+        this.diplomados = [...response];
+      });
 
   }
 
