@@ -8,13 +8,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { concatMap } from 'rxjs/operators';
 import { LoadingBarService } from 'src/app/shared/services/loading-bar.service';
 import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
+import { DiplomadosListComponent } from '../../components/diplomados-list/diplomados-list.component';
+import { DialogService } from 'primeng/dynamicdialog';
 
 
 @Component({
   selector: 'app-indicadores-cadastro-container',
   templateUrl: './indicadores-cadastro-container.component.html',
   styleUrls: ['./indicadores-cadastro-container.component.scss'],
-  providers: [ConfirmationService]
+  providers: [ConfirmationService, DialogService]
 })
 export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy {
   public indicadores: Indicador[];
@@ -33,6 +35,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
     private fb: FormBuilder,
     private loading: LoadingBarService,
     private userService: UserService,
+    private dialogService: DialogService
   ) { }
 
   ngOnInit(): void {
@@ -169,6 +172,18 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
         ];
 
       });
+  }
+
+  buscaDiplomados(indicador: Indicador): void {
+    const ref = this.dialogService.open(DiplomadosListComponent, {
+      data: {
+        idOrg: indicador.organizacao.id,
+        capacitacaoId: indicador.capacitacao.id
+      },
+      header: `Diplomados do ${indicador.capacitacao.nome}`,
+      width: '70vw',
+      height: 'auto'
+    });
   }
 
   buildForm(): void {

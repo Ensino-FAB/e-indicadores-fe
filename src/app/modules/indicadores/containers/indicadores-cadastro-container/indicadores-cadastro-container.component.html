@@ -25,7 +25,16 @@
                     <td class="p-text-center">{{indicador.capacitacao.nome}}</td>
                     <td class="p-text-center">{{indicador.minimo}}</td>
                     <td class="p-text-center">{{indicador.ideal}}</td>
-                    <td class="p-text-center">LUPA - {{indicador.existente}}</td>
+                    <td class="p-text-center">
+                        <div class="p-d-flex p-jc-center p-ai-center">
+                            <div *ngIf="indicador.existente" style="margin-right: 0.4rem;">{{indicador.existente}}</div>
+                            <a *ngIf="indicador.existente" (click)="buscaDiplomados(indicador)" style="cursor: pointer;">
+                                <button pButton pRipple type="button" icon="pi pi-search"
+                                    class="p-button-rounded p-button-text"></button>
+                            </a>
+                        </div>
+                        <span *ngIf="!indicador.existente">-</span>    
+                    </td>
                     <td class="p-text-center">
                         <p-overlayPanel #op [dismissable]="true" [style]="{width: '150px'}" appendTo="body">
                             <ng-template pTemplate>

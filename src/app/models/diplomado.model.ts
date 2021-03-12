@@ -4,6 +4,6 @@ export interface Diplomado {
     pessoaResponse: Pessoa;
     capacitacaoResponse: Capacitacao;
     local?: string;
-    dataInicio?: Date;
-    dataTermino?: Date;
+    dtInicio?: Date;
+    dtFim?: Date;
 }
