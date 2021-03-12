@@ -1,12 +1,11 @@
 <section>
     <div class="p-shadow-1" style="margin: 4rem; padding-top: 1.5rem;">
-    <h1>titulo de pesquisa</h1>
-
+        <h1 style="width: 60%; margin: 10px 10px 0 10px;">Pesquisar indicadores</h1>
         <div [formGroup]='consultaForm' class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 10px 10px 0 10px;">
             <div class="p-field p-col">
                 <p-autoComplete field="label" formControlName="curso" [suggestions]="cursos"
-                    emptyMessage="Curso não encontrado"
-                    (completeMethod)="searchCursos($event)" [dropdown]="true" [minLength]="3">
+                    emptyMessage="Curso não encontrado" (completeMethod)="searchCursos($event)" [dropdown]="true"
+                    [minLength]="3">
                     <ng-template let-curso pTemplate="item">
                         <div class="dropdown-item-container">
                             <span style="font-weight: bolder; font-size: 1.4rem">{{curso.label}}</span>
@@ -18,8 +17,8 @@
             </div>
             <div class="p-field p-col">
                 <p-autoComplete field="label" formControlName="org" [suggestions]="orgsSubordinadas"
-                    emptyMessage="Organização não encontrada"
-                    (completeMethod)="searchOrgsSubordinadas($event)" [dropdown]="true" [minLength]="3">
+                    emptyMessage="Organização não encontrada" (completeMethod)="searchOrgsSubordinadas($event)"
+                    [dropdown]="true" [minLength]="3">
                     <ng-template let-curso pTemplate="item">
                         <div class="dropdown-item-container">
                             <span style="font-weight: bolder; font-size: 1.4rem;">{{curso.label}}</span>
@@ -33,13 +32,18 @@
         <div class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 0 10px 20px 20px;">
             <div class="p-formgroup-inline">
                 <div class="p-field-checkbox">
-                    <p-checkbox [(ngModel)]="subordinadas" [binary]="true"></p-checkbox>
-                    <label for="subordinadas">incluir subordinadas</label>
+                    <p-checkbox [(ngModel)]="incluirSubordinadas" [binary]="true"></p-checkbox>
+                    <label for="incluirSubordinadas">incluir subordinadas</label>
                 </div>
             </div>
             <div class="p-field p-col-2">
                 <button pButton pRipple type="button" label="Pesquisar" class="p-button-raised"
                     (click)="buscarIndicadores()"></button>
+            </div>
+
+            <div class="p-field p-col-2">
+                <button pButton pRipple type="button" label="Limpar" class="p-button-raised"
+                    (click)="resetForms()"></button>
             </div>
         </div>
 

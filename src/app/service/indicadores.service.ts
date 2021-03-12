@@ -10,6 +10,7 @@ import { Indicador, IndicadorCreate } from '../models/indicador.model';
   providedIn: 'root'
 })
 export class IndicadoresService {
+  
 
   constructor(protected http: HttpClient) { }
 
@@ -54,6 +55,12 @@ export class IndicadoresService {
 
   delete(idIndicador: number): Observable<any> {
     return this.http.delete<any>(`${this.endpoint}/${idIndicador}`,);
+  }
+
+  findAllByCapacitacao(idCapacitacao: string): Observable<Indicador[]> {
+    const data = {idCapacitacao};
+    const params = this.buildHttpParams(data);
+    return this.http.get<Indicador[]>(this.endpoint, {params}).pipe(take(1));
   }
 
   findAllIndicadoresOrganizacao(idOrg: string): Observable<Indicador[]> {

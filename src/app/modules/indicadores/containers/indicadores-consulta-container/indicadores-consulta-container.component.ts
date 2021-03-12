@@ -1,12 +1,10 @@
-import { Capacitacao } from './../../../../models/capacitacao.model';
 import { UserService } from 'src/app/service/user.service';
 import { IndicadoresFacade } from './../indicadores-facade';
 import { Indicador, IndicadorAgrupado } from './../../../../models/indicador.model';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { SelectItem } from 'primeng/api';
+import { SelectItem, MessageService } from 'primeng/api';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { Organizacao } from 'src/app/models/organizacao.model';
 
 @Component({
   selector: 'app-indicadores-consulta-container',
@@ -22,7 +20,7 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
   public indicadoresAgrupados: IndicadorAgrupado[] = [];
   public idCursos: number;
   public showTableOmIndicadores: boolean;
-  public subordinadas = false;
+  public incluirSubordinadas = false;
   private subs$: Subscription[] = [];
 
   public consultaForm: FormGroup;
@@ -30,6 +28,7 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
   constructor(
     private indicadoresFacade: IndicadoresFacade,
     private fb: FormBuilder,
+    private messageService: MessageService,
     private userService: UserService
   ) {
 
@@ -64,10 +63,30 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
     const selectedItemCurso: SelectItem = this.curso?.value;
     const selectedItemOrg: SelectItem = this.org?.value;
 
-    if (!this.subordinadas) {
+    if (selectedItemCurso === null && selectedItemOrg === null) {
+      this.messageService.add(
+        {
+          severity: 'warn',
+          summary: 'Atenção',
+          detail: 'Selecione uma organização ou capacitação para realizar a pesquisa',
+          life: 3000
+        }
+      );
+      return;
+    }
+
+    if (selectedItemCurso && !selectedItemOrg) {
+      this.indicadoresFacade.findAllIndicadoresByCapacitacao(selectedItemCurso.value.id)
+        .subscribe(response => {
+          this.fillIndicadoresAgrupados(response);
+        })
+      return;
+    }
+
+    if (!this.incluirSubordinadas) {
       if (!selectedItemCurso) {
         this.subs$.push(
-          this.indicadoresFacade.findIndicadores(selectedItemOrg.value.id)
+          this.indicadoresFacade.findAllIndicadoresByOrg(selectedItemOrg.value.id)
             .subscribe(response => {
               this.indicadores = response;
               this.showTableOmIndicadores = true;
@@ -156,6 +175,11 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
       org: null,
       curso: null,
     });
+
+    this.indicadoresAgrupados = [];
+    this.indicadores = [];
+    this.showTableOmIndicadores = false;
+    this.incluirSubordinadas = false;
   }
 
   buildForm(): void {

@@ -29,14 +29,18 @@ export class IndicadoresFacade {
     return this.indicadoresService.edit(idIndicador, indicadorCreate);
   }
 
-  findIndicadores(idOrganizacao: number): Observable<Indicador[]> {
+  findAllIndicadoresByCapacitacao(idCapacitacao: number): Observable<Indicador[]> {
+    return this.indicadoresService.findAllByCapacitacao(`${idCapacitacao}`);
+  }
+
+  findAllIndicadoresByOrg(idOrganizacao: number): Observable<Indicador[]> {
     return this.indicadoresService.findAllIndicadoresOrganizacao(`${idOrganizacao}`);
   }
 
   findAllIndicadoresOrgESubordinadas(org: Organizacao): Observable<Indicador[]> {
     const getIndicadoresSubordinadas$ = this.indicadoresService.findAllIndicadoresOrganizacoesSubordinadas(org.cdOrg);
 
-    return this.findIndicadores(org.id).pipe(switchMap(indicadores => {
+    return this.findAllIndicadoresByOrg(org.id).pipe(switchMap(indicadores => {
       return getIndicadoresSubordinadas$.pipe(
         map(indSubordinadas => [...indicadores, ...indSubordinadas])
       );
@@ -55,9 +59,8 @@ export class IndicadoresFacade {
         switchMap(indicadores => {
           return getIndSubord$.pipe(
             map(indSubordinadas => [...indicadores, ...indSubordinadas])
-          )
-        }),
-        tap(console.log)
+          );
+        })
       );
   }
 
