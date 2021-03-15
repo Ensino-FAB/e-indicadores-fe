@@ -1,4 +1,4 @@
-import { RouterModule } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterModule, RouterStateSnapshot } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -38,6 +38,12 @@ import { MessageService } from 'primeng/api';
       provide: HTTP_INTERCEPTORS,
       useClass: LoggingInterceptor,
       multi: true,
+    },
+    {
+      provide: 'externalUrlRedirectResolver',
+      useValue: (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+        window.location.href = (route.data as any).externalUrl;
+      },
     },
   ],
 })

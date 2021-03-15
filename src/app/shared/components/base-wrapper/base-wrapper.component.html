@@ -35,7 +35,7 @@
         <a href="#" [routerLink]="['']">
           <button pButton pRipple type="button" icon="pi pi-th-large" class="c-sub-btn"></button>
         </a>
-        <a href="#" [routerLink]="['/indicadores', 'cadastro']">
+        <a href="#" [routerLink]="['/indicadores', 'cadastro']" *ngIf="showBtnCadastrar()">
           <button pButton pRipple type="button" label="Cadastro" class="c-sub-btn"></button>
         </a>
         <a href="#" [routerLink]="['/indicadores']">

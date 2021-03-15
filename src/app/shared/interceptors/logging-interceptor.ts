@@ -9,6 +9,7 @@ import {
 } from '@angular/common/http';
 
 import { finalize, share } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class LoggingInterceptor implements HttpInterceptor {
@@ -19,11 +20,14 @@ export class LoggingInterceptor implements HttpInterceptor {
     const started = Date.now();
     return next.handle(req).pipe(
       finalize(() => {
-        const elapsed = Date.now() - started;
-        console.log(
-          `URL: ${req.url} Method: ${req.method} Time took: ${elapsed} ms`
-        );
-      }),
+        if (environment.SHOW_LOGGING_ROUTES) {
+          const elapsed = Date.now() - started;
+          console.log(
+            `URL: ${req.url} Method: ${req.method} Time took: ${elapsed} ms`
+          );
+        }
+      }
+      ),
       share()
     );
   }

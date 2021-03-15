@@ -17,6 +17,9 @@ export const INDICADORES_ROUTES: Routes = [
         path: 'cadastro',
         canActivate: [AuthGuard],
         canActivateChild: [AuthGuard],
+        data: {
+          roles: ['crud-indicadores']
+        },
         component: IndicadoresCadastroContainerComponent
     },
     {

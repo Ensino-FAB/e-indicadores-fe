@@ -6,7 +6,6 @@ import {
 } from '@angular/router';
 
 import { Observable } from 'rxjs';
-import { User } from '../../../app/models/user.model';
 import { UserService } from '../../../app/service/user.service';
 
 @Injectable({
@@ -76,6 +75,7 @@ export class AuthGuard extends KeycloakAuthGuard implements CanActivateChild {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
+
     return this.handleUserRoles(route.data?.roles);
   }
 }

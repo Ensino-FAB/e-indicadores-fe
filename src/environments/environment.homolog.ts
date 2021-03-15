@@ -6,4 +6,5 @@ export const environment = {
   KEYCLOAK_CLIENT_ID: 'ensino-client',
   KEYCLOAK_REDIRECT_URI:
     'https://sigpes.servicos.homolog.ccarj.intraer/esistens-indicadores/assets/silent-check-sso.html',
+  SHOW_LOGGING_ROUTES: false,
 };

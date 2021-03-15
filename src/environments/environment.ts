@@ -11,6 +11,7 @@ export const environment = {
   KEYCLOAK_REDIRECT_URI:
     'http://localhost:4200/esistens-indicadores/assets/silent-check-sso.html',
   INDICADORES_FRONT_URL: 'http://localhost:4200/esistens-indicadores',
+  SHOW_LOGGING_ROUTES: true,
 };
 
 /*

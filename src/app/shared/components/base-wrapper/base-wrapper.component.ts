@@ -70,6 +70,15 @@ export class BaseWrapperComponent implements OnInit, OnDestroy {
     this.keycloak.logout();
   }
 
+  showBtnCadastrar(): boolean {
+
+    if (this.userService.user?.roles) {
+      return this.userService.user?.roles.every(role => this.userService.user?.roles.includes(role));
+    }
+
+    return false;
+  }
+
   handleUserName(): string {
     return (
       this.userService.user?.nome
