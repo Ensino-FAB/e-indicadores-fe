@@ -25,7 +25,7 @@ export class TableIndicadoresCursoComponent {
       },
       header: `Diplomados do ${indicador.capacitacao.nome}`,
       width: '70vw',
-      height: '70vh'
+      height: 'auto'
     });
   }
 

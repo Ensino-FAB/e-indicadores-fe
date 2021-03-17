@@ -175,7 +175,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
   }
 
   buscaDiplomados(indicador: Indicador): void {
-    const ref = this.dialogService.open(DiplomadosListComponent, {
+    this.dialogService.open(DiplomadosListComponent, {
       data: {
         idOrg: indicador.organizacao.id,
         capacitacaoId: indicador.capacitacao.id
