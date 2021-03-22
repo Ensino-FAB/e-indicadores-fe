@@ -71,12 +71,13 @@
                     <div class="p-field p-formgrid p-grid" *ngIf="!indicadorId">
                         <div class="p-field p-col">
                             <p-autoComplete field="label" formControlName="capacitacao" [suggestions]="capacitacoes"
-                                (completeMethod)="searchCapacitacao($event)" [dropdown]="true" [minLength]="3">
+                                (completeMethod)="searchCapacitacao($event)" [dropdown]="true" [minLength]="3"
+                                [placeholder]="'Selecione uma capacitação'">
                                 <ng-template let-capacitacao pTemplate="item">
                                     <div class="dropdown-item-container">
-                                        <span style="font-weight: bolder; font-size: 1.4rem">{{capacitacao.label}}</span>
+                                        <span style="font-weight: bolder; font-size: 1.2rem">{{capacitacao.label}}</span>
                                         <br>
-                                        <span style="font-style: italic; font-size: 1.2rem;">{{capacitacao.title}}</span>
+                                        <span style="font-size: 1.0rem;">{{capacitacao.title}}</span>
                                     </div>
                                 </ng-template>
                             </p-autoComplete>
@@ -86,12 +87,13 @@
                         </div>
                         <div class="p-field p-col">
                             <p-autoComplete field="label" formControlName="org" [suggestions]="orgsSubordinadas"
-                                (completeMethod)="searchOrgsSubordinadas($event)" [dropdown]="true" [minLength]="3">
+                                (completeMethod)="searchOrgsSubordinadas($event)" [dropdown]="true" [minLength]="2"
+                                [placeholder]="'Selecione uma organização'">
                                 <ng-template let-org pTemplate="item">
                                     <div class="dropdown-item-container">
-                                        <span style="font-weight: bolder; font-size: 1.4rem;">{{org.label}}</span>
+                                        <span style="font-weight: bolder; font-size: 1.2rem;">{{org.label}}</span>
                                         <br>
-                                        <span style="font-style: italic; font-size: 1.2rem;">{{org.title}}</span>
+                                        <span style="font-size: 1.0rem;">{{org.title}}</span>
                                     </div>
                                 </ng-template>
                             </p-autoComplete>

@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 })
 export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy {
 
-  public orgsSubordinadas: SelectItem[];
+  public organizacoes: SelectItem[];
   public cursos: SelectItem[];
   public cdOrgLogado: string;
   public indicadores: Indicador[];
@@ -44,7 +44,7 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
       this.indicadoresFacade.findOrganizacoesSubordinadas(this.userService.user.organizacao.cdOrg)
         .subscribe(
           response => {
-            this.orgsSubordinadas = response.map(org => {
+            this.organizacoes = response.map(org => {
               const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
               return item;
             });
@@ -170,17 +170,15 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
     );
   }
 
-  searchOrgsSubordinadas(event: any): void {
-    const orgLogada = this.userService.user.organizacao;
+  searchOrgs(event: any): void {
     this.subs$.push(
-      this.indicadoresFacade.findOrganizacoesSubordinadas(orgLogada.cdOrg)
+      this.indicadoresFacade.findAllOrganizacoes({sigla: event.query})
         .subscribe(response => {
-          const itens = response.map(org => {
+          const itens = response.content.map(org => {
             const item: SelectItem = { label: org.sigla, title: org.nome, value: org };
             return item;
           });
-          this.orgsSubordinadas = [
-            { label: orgLogada?.sigla, title: orgLogada?.nome, value: orgLogada },
+          this.organizacoes = [
             ...itens
           ];
         })

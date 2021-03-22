@@ -4,26 +4,26 @@
         <div [formGroup]='consultaForm' class="p-fluid p-formgrid p-grid" style="width: 60%; margin: 10px 10px 0 10px;">
             <div class="p-field p-col">
                 <p-autoComplete field="label" formControlName="curso" [suggestions]="cursos"
-                    emptyMessage="Curso não encontrado" (completeMethod)="searchCursos($event)" [dropdown]="true"
-                    [minLength]="3">
+                    emptyMessage="Capacitação não encontrado" (completeMethod)="searchCursos($event)" [dropdown]="true"
+                    [minLength]="3" [placeholder]="'Selecione uma capacitação'">
                     <ng-template let-curso pTemplate="item">
                         <div class="dropdown-item-container">
-                            <span style="font-weight: bolder; font-size: 1.4rem">{{curso.label}}</span>
+                            <span style="font-weight: bolder; font-size: 1.2rem">{{curso.label}}</span>
                             <br>
-                            <span style="font-style: italic; font-size: 1.2rem;">{{curso.title}}</span>
+                            <span style="font-size: 1.0rem;">{{curso.title}}</span>
                         </div>
                     </ng-template>
                 </p-autoComplete>
             </div>
             <div class="p-field p-col">
-                <p-autoComplete field="label" formControlName="org" [suggestions]="orgsSubordinadas"
-                    emptyMessage="Organização não encontrada" (completeMethod)="searchOrgsSubordinadas($event)"
-                    [dropdown]="true" [minLength]="3">
+                <p-autoComplete field="label" formControlName="org" [suggestions]="organizacoes"
+                    emptyMessage="Organização não encontrada" (completeMethod)="searchOrgs($event)"
+                    [dropdown]="true" [minLength]="3" [placeholder]="'Selecione uma organização'">
                     <ng-template let-curso pTemplate="item">
                         <div class="dropdown-item-container">
-                            <span style="font-weight: bolder; font-size: 1.4rem;">{{curso.label}}</span>
+                            <span style="font-weight: bolder; font-size: 1.2rem;">{{curso.label}}</span>
                             <br>
-                            <span style="font-style: italic; font-size: 1.2rem;">{{curso.title}}</span>
+                            <span style="font-size: 1.0rem;">{{curso.title}}</span>
                         </div>
                     </ng-template>
                 </p-autoComplete>

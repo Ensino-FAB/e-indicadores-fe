@@ -171,6 +171,16 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
           ...itens
         ];
 
+        let filtered: SelectItem[] = [];
+        const query = event.query;
+        for (let i = 0; i < this.orgsSubordinadas.length; i++) {
+          const org = this.orgsSubordinadas[i];
+          if (org.label.toLowerCase().indexOf(query.toLowerCase()) >= 0) {
+            filtered.push(org);
+          }
+        }
+
+        this.orgsSubordinadas = [...filtered];
       });
   }
 

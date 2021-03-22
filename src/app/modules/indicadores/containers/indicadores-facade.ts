@@ -4,7 +4,7 @@ import { OrganizacaoService } from './../../../service/organizacao.service';
 import { IndicadoresService } from './../../../service/indicadores.service';
 import { Diplomado } from '../../../models/diplomado.model';
 import { Capacitacao, CapacitacaoSearchModel } from '../../../models/capacitacao.model';
-import { Organizacao } from './../../../models/organizacao.model';
+import { Organizacao, OrganizacaoSearch } from './../../../models/organizacao.model';
 import { Indicador, IndicadorCreate } from './../../../models/indicador.model';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
@@ -68,6 +68,10 @@ export class IndicadoresFacade {
 
   deleteIndicador(idIndicador: number): Observable<any> {
     return this.indicadoresService.delete(idIndicador);
+  }
+
+  findAllOrganizacoes(search: OrganizacaoSearch): Observable<Pageable<Organizacao>> {
+    return this.organizacaoService.findAll(search);
   }
 
   findOrganizacoesSubordinadas(idOrg: string): Observable<Organizacao[]> {

@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Organizacao } from '../models/organizacao.model';
+import { Organizacao, OrganizacaoSearch } from '../models/organizacao.model';
+import { Pageable } from '../models/pageable.model';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +30,21 @@ export class OrganizacaoService {
     );
   }
 
+  buildHttpParams(data: any): HttpParams {
+    let params = new HttpParams();
+    if (!data) {
+      return params;
+    }
+
+    Object.keys(data).forEach(
+      (key) => {
+        params = params.append(key, data[key]);
+      }
+    );
+
+    return params;
+  }
+
   findOrganizacoesDiretamenteSubordinadas(idOrg: string): Observable<Organizacao[]> {
     return this.http.get<Organizacao[]>(`${this.endpoint}/${idOrg}/subordinadas`);
   }
@@ -36,6 +53,12 @@ export class OrganizacaoService {
     return this.http.get<Organizacao[]>(`${this.endpoint}/${idOrg}/subordinadas`);
   }
 
+  findAll(search: OrganizacaoSearch): Observable<Pageable<Organizacao>> {
+    this.removeEmptyFields(search);
+    const params = this.buildHttpParams(search);
+
+    return this.http.get<Pageable<Organizacao>>(`${this.endpoint}`, {params}).pipe(take(1));
+  }
 
 
 }

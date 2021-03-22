@@ -71,12 +71,11 @@ export class BaseWrapperComponent implements OnInit, OnDestroy {
   }
 
   showBtnCadastrar(): boolean {
-
-    if (this.userService.user?.roles) {
-      return this.userService.user?.roles.every(role => this.userService.user?.roles.includes(role));
+    if (!this.userService.user?.roles || (this.userService.user?.roles.indexOf('ROLE_crud-indicadores') < 0)) {
+      return false;
     }
 
-    return false;
+    return true;
   }
 
   handleUserName(): string {
@@ -84,6 +83,8 @@ export class BaseWrapperComponent implements OnInit, OnDestroy {
       this.userService.user?.nome
         .split(' ')
         .map((name) => `${name[0].toUpperCase()}${name.slice(1).toLowerCase()}`)
+        .concat('-')
+        .concat(this.userService.user.organizacao.sigla || '?')
         .join(' ') || 'Usuário não identificado'
     );
   }

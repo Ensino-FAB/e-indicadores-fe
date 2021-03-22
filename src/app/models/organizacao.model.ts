@@ -5,3 +5,8 @@ export interface Organizacao extends BaseModel {
     sigla: string;
     cdOrg: string;
 }
+
+export interface OrganizacaoSearch{
+    nome?: string;
+    sigla?: string;
+}

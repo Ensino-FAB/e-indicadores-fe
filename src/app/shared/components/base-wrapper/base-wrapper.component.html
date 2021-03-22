@@ -25,7 +25,7 @@
         <p-button label="NOTIFICAÇÕES" icon="pi pi-bell" styleClass="p-button-outlined p-mr-5" [disabled]="true">
         </p-button>
         <span class="p-mr-2">{{ handleUserName() }}</span>
-        <p-avatar [label]="handleUserName() ? handleUserName()[0] : '?'" shape="circle" styleClass="p-mr-4"></p-avatar>
+        <p-avatar icon="pi pi-user" shape="circle" styleClass="p-mr-4"></p-avatar>
         <p-button icon="pi pi-sign-out" iconPos="right" styleClass="p-button-text p-button-secondary"
           (onClick)="handleLogout()"></p-button>
       </div>
