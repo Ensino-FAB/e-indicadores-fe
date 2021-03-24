@@ -147,7 +147,7 @@ export class IndicadoresCadastroContainerComponent implements OnInit, OnDestroy 
   }
 
   searchCapacitacao(event: any): void {
-    this.facade.findAllCapacitacao({ nome: event.query })
+    this.facade.findAllCapacitacao({ filtroNomeOuCodigo: event.query })
       .subscribe(response => {
         this.capacitacoes = response.content.map(capacitacao => ({
           label: capacitacao.codigo,

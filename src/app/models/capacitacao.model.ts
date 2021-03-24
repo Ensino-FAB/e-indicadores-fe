@@ -7,4 +7,5 @@ export interface Capacitacao extends BaseModel{
 export interface CapacitacaoSearchModel{
     nome?: string;
     codigo?: string;
+    filtroNomeOuCodigo?: string;
 }

@@ -159,7 +159,7 @@ export class IndicadoresConsultaContainerComponent implements OnInit, OnDestroy 
 
   searchCursos(event: any): void {
     this.subs$.push(
-      this.indicadoresFacade.findAllCapacitacao({ nome: event.query })
+      this.indicadoresFacade.findAllCapacitacao({ filtroNomeOuCodigo: event.query })
         .subscribe(response => {
           this.cursos = response.content.map(curso => ({
             label: curso.codigo,
